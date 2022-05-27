@@ -1,16 +1,17 @@
 #include <iostream>
-#include <cstring>
+#include <string>
 #include <thread>
 
+#include "main.h"
 #include "monitorEvents.h"
 
 using namespace std;
 
-bool log_enabled = false;
+bool logEnabled = false;
 
 void log(string to_log)
 {
-    if(log_enabled == true)
+    if(logEnabled == true)
     {
         cout << to_log << endl;
 
@@ -19,23 +20,23 @@ void log(string to_log)
 
 int main()
 {
-    cout << "WTFFFF" << endl;
-    const char* tmp = getenv("DEBUG"); //
-    string env_var;
+    const char* tmp = getenv("DEBUG");
+    string envVar;
 
     if(tmp != NULL)
     {
-        env_var = tmp;
-        if(env_var == "true")
+        envVar = tmp;
+        if(envVar == "true")
         {
-            log_enabled = true;
+            logEnabled = true;
             log("Debug mode is activated");
         }
     }
 
-    //std::thread monitor_dev(start_monitoring_dev);
+    std::thread monitor_dev(startMonitoringDev);
 
-    start_monitoring_dev();
+    // https://stackoverflow.com/questions/7381757/c-terminate-called-without-an-active-exception
+    monitor_dev.join();
 
     return 0;
 }

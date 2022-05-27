@@ -1,12 +1,13 @@
 #include "monitorEvents.h"
+#include "main.h"
 
 #include <iostream>
-#include <cstring>
+#include <string>
+
 using namespace std;
 
-void start_monitoring_dev()
+void startMonitoringDev()
 {
-    //log("Starting monitoring events");
-    cout << "niceeeeecdsds" << endl;
+    log("Starting monitoring events");
 
 }

@@ -7,11 +7,11 @@
 set(CMAKE_SYSTEM_NAME Linux)
 
 # which compilers to use for C and C++
-set(CMAKE_C_COMPILER   arm-kobo-linux-gnueabihf-gcc)
-set(CMAKE_CXX_COMPILER arm-kobo-linux-gnueabihf-g++)
+set(CMAKE_C_COMPILER   armv7l-linux-musleabihf-gcc)
+set(CMAKE_CXX_COMPILER armv7l-linux-musleabihf-g++)
 
 # where is the target environment located
-set(CMAKE_FIND_ROOT_PATH /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/ )
+set(CMAKE_FIND_ROOT_PATH /home/build/inkbox/kernel/toolchain/armv7l-linux-musleabihf-cross )
 
 # adjust the default behavior of the FIND_XXX() commands:
 # search programs in the host environment

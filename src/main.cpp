@@ -5,8 +5,6 @@
 #include "main.h"
 #include "monitorEvents.h"
 
-using namespace std;
-
 bool logEnabled = false;
 
 void log(string to_log)

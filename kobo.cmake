@@ -11,7 +11,7 @@ set(CMAKE_C_COMPILER   armv7l-linux-musleabihf-gcc)
 set(CMAKE_CXX_COMPILER armv7l-linux-musleabihf-g++)
 
 # where is the target environment located
-set(CMAKE_FIND_ROOT_PATH /home/build/inkbox/kernel/toolchain/armv7l-linux-musleabihf-cross )
+set(CMAKE_FIND_ROOT_PATH /home/build/inkbox/kernel/toolchain/armv7l-linux-musleabihf-cross/)
 
 # adjust the default behavior of the FIND_XXX() commands:
 # search programs in the host environment

@@ -4,8 +4,6 @@
 #include <iostream>
 #include <string>
 
-using namespace std;
-
 void startMonitoringDev()
 {
     log("Starting monitoring events");

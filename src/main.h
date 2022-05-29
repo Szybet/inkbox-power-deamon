@@ -2,7 +2,6 @@
 #define MAIN_H
 
 #include <string>
+void log(std::string message);
 
-void log(string message);
-
-#endif
+#endif                                                              

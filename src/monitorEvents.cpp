@@ -2,7 +2,6 @@
 #include "main.h"
 
 #include <iostream>
-#include <string>
 
 void startMonitoringDev()
 {

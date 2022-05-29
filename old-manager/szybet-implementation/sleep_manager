@@ -1,0 +1,19 @@
+#!/sbin/openrc-run
+
+description="Manages suspends for inkbox"
+
+depend() {
+	before inkbox_gui
+	keyword -prefix -lxc
+}
+
+start() {
+	ebegin "Waiting for a power button event to put the device to sleep"
+	killall -9 manage_sleep.sh 2> /dev/null
+	killall -9 after_sleep.sh 2> /dev/null
+	killall -9 prepare.sh 2> /dev/null
+	killall -9 touch_issue_fix.sh 2> /dev/null
+	sleep 1
+	/etc/init.d/suspend_scripts/manage_sleep.sh &
+	eend $?
+}

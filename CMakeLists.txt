@@ -13,7 +13,12 @@ file(GLOB fileSrc
      "src/*.cpp"
 )
 
+include_directories(${CMAKE_SOURCE_DIR}/lib)
+link_directories(${CMAKE_SOURCE_DIR}/lib/libevdev/install/lib/)
+
 add_executable(inkbox-power-deamon ${fileSrc})
+
+target_link_libraries(inkbox-power-deamon libevdev.so.2.3.0)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

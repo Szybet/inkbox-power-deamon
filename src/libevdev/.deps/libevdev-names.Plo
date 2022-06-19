@@ -1,0 +1,128 @@
+libevdev-names.lo: libevdev-names.c ../config.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/errno.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/features.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/sys/cdefs.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/wordsize.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/gnu/stubs.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/errno.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/linux/errno.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/asm/errno.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/asm-generic/errno.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/asm-generic/errno-base.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/stdlib.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/lib/gcc/arm-kobo-linux-gnueabihf/11.2.0/include/stddef.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/waitflags.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/waitstatus.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/endian.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/endian.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/byteswap.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/xlocale.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/sys/types.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/types.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/typesizes.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/time.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/sys/select.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/select.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/sigset.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/time.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/sys/sysmacros.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/pthreadtypes.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/alloca.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/string.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/string.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/string2.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/strings.h \
+ libevdev-int.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/stdio.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/libio.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/_G_config.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/wchar.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/lib/gcc/arm-kobo-linux-gnueabihf/11.2.0/include/stdarg.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/stdio_lim.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/sys_errlist.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/stdio.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/lib/gcc/arm-kobo-linux-gnueabihf/11.2.0/include/stdbool.h \
+ libevdev.h ../include/linux/input.h ../include/linux/linux/input.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/sys/time.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/sys/ioctl.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/ioctls.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/asm/ioctls.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/asm/ioctl.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/asm-generic/ioctl.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/ioctl-types.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/sys/ttydefaults.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/linux/types.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/asm/types.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/asm-generic/int-ll64.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/asm/bitsperlong.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/asm-generic/bitsperlong.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/linux/posix_types.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/linux/stddef.h \
+ /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/asm/posix_types.h \
+ ../include/linux/linux/input-event-codes.h libevdev-util.h event-names.h
+../config.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/errno.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/features.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/sys/cdefs.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/wordsize.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/gnu/stubs.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/errno.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/linux/errno.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/asm/errno.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/asm-generic/errno.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/asm-generic/errno-base.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/stdlib.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/lib/gcc/arm-kobo-linux-gnueabihf/11.2.0/include/stddef.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/waitflags.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/waitstatus.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/endian.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/endian.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/byteswap.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/xlocale.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/sys/types.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/types.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/typesizes.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/time.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/sys/select.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/select.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/sigset.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/time.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/sys/sysmacros.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/pthreadtypes.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/alloca.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/string.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/string.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/string2.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/strings.h:
+libevdev-int.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/stdio.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/libio.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/_G_config.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/wchar.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/lib/gcc/arm-kobo-linux-gnueabihf/11.2.0/include/stdarg.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/stdio_lim.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/sys_errlist.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/stdio.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/lib/gcc/arm-kobo-linux-gnueabihf/11.2.0/include/stdbool.h:
+libevdev.h:
+../include/linux/input.h:
+../include/linux/linux/input.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/sys/time.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/sys/ioctl.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/ioctls.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/asm/ioctls.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/asm/ioctl.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/asm-generic/ioctl.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/bits/ioctl-types.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/sys/ttydefaults.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/linux/types.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/asm/types.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/asm-generic/int-ll64.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/asm/bitsperlong.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/asm-generic/bitsperlong.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/linux/posix_types.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/linux/stddef.h:
+/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/arm-kobo-linux-gnueabihf/sysroot/usr/include/asm/posix_types.h:
+../include/linux/linux/input-event-codes.h:
+libevdev-util.h:
+event-names.h:

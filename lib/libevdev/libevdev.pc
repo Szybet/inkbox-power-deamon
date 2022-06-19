@@ -1,0 +1,10 @@
+prefix=/mnt/HDD/Project/Public/inkbox-power-deamon/lib/libevdev/install
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: libevdev
+Description: Handler library for evdev events
+Version: 1.12.0
+Cflags: -I${includedir}/libevdev-1.0/
+Libs: -L${libdir} -levdev

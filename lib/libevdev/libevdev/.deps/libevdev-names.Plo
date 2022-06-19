@@ -1,0 +1,70 @@
+libevdev-names.lo: libevdev-names.c \
+ /mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/stdc-predef.h \
+ config.h \
+ /mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/errno.h \
+ /mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/features.h \
+ /mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/bits/errno.h \
+ /mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/stdlib.h \
+ /mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/bits/alltypes.h \
+ /mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/alloca.h \
+ /mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/string.h \
+ /mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/strings.h \
+ libevdev-int.h \
+ /mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/stdio.h \
+ /mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/stdbool.h \
+ libevdev.h ../include/linux/input.h ../include/linux/linux/input.h \
+ /mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/sys/time.h \
+ /mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/sys/select.h \
+ /mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/sys/ioctl.h \
+ /mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/bits/ioctl.h \
+ /mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/bits/ioctl_fix.h \
+ /mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/sys/types.h \
+ /mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/endian.h \
+ /mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/linux/types.h \
+ /mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/asm/types.h \
+ /mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/asm-generic/int-ll64.h \
+ /mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/asm/bitsperlong.h \
+ /mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/asm-generic/bitsperlong.h \
+ /mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/linux/posix_types.h \
+ /mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/linux/stddef.h \
+ /mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/asm/posix_types.h \
+ /mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/asm-generic/posix_types.h \
+ ../include/linux/linux/input-event-codes.h \
+ /mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/stdarg.h \
+ libevdev-util.h event-names.h
+/mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/stdc-predef.h:
+config.h:
+/mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/errno.h:
+/mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/features.h:
+/mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/bits/errno.h:
+/mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/stdlib.h:
+/mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/bits/alltypes.h:
+/mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/alloca.h:
+/mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/string.h:
+/mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/strings.h:
+libevdev-int.h:
+/mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/stdio.h:
+/mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/stdbool.h:
+libevdev.h:
+../include/linux/input.h:
+../include/linux/linux/input.h:
+/mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/sys/time.h:
+/mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/sys/select.h:
+/mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/sys/ioctl.h:
+/mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/bits/ioctl.h:
+/mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/bits/ioctl_fix.h:
+/mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/sys/types.h:
+/mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/endian.h:
+/mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/linux/types.h:
+/mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/asm/types.h:
+/mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/asm-generic/int-ll64.h:
+/mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/asm/bitsperlong.h:
+/mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/asm-generic/bitsperlong.h:
+/mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/linux/posix_types.h:
+/mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/linux/stddef.h:
+/mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/asm/posix_types.h:
+/mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/asm-generic/posix_types.h:
+../include/linux/linux/input-event-codes.h:
+/mnt/HDD/Project/Public/emu-new/out/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/stdarg.h:
+libevdev-util.h:
+event-names.h:

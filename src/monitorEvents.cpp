@@ -1,85 +1,48 @@
-#include "monitorEvents.h"
-#include "main.h"
-
 #include <iostream>
 
-// https://developer.ibm.com/tutorials/l-ubuntu-inotify/
-#include "sys/inotify.h"
+#include "main.h"
+#include "monitorEvents.h"
+
+// libevdev
+#include <assert.h>
 #include <errno.h>
+#include <fcntl.h>
+#include <linux/input.h>
 #include <stdio.h>
-#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 
-// https://pubs.opengroup.org/onlinepubs/009604599/functions/read.html
-#include <unistd.h>
-
-
-#define EVENT_SIZE (sizeof(struct inotify_event))
-#define BUF_LEN (1024 * (EVENT_SIZE + 16))
+#include "libevdev/libevdev.h"
+#include "libevdev/config.h"
 
 void startMonitoringDev() {
   log("Starting monitoring events");
 
-  int length, i = 0;
-  int fd;
-  int wd;
-  char buffer[BUF_LEN];
+  struct libevdev *dev = NULL;
 
-  fd = inotify_init();
-  if (fd < 0) {
-    log("inotify_init failed (old kernel?)");
+  int fd = open("/dev/input/event0", O_RDONLY | O_NONBLOCK);
+  int rc = libevdev_new_from_fd(fd, &dev);
+
+  if (rc < 0) {
+    fprintf(stderr, "Failed to init libevdev (%s)\n", strerror(-rc));
+    exit(1);
+  }
+  printf("Input device name: \"%s\"\n", libevdev_get_name(dev));
+  printf("Input device ID: bus %#x vendor %#x product %#x\n",
+         libevdev_get_id_bustype(dev), libevdev_get_id_vendor(dev),
+         libevdev_get_id_product(dev));
+  if (!libevdev_has_event_type(dev, EV_REL) ||
+      !libevdev_has_event_code(dev, EV_KEY, BTN_LEFT)) {
+    printf("This device does not look like a mouse\n");
+    exit(1);
   }
 
-  wd = inotify_add_watch(fd, "/tmp", IN_MODIFY | IN_CREATE | IN_DELETE );
-
-  length = read( fd, buffer, BUF_LEN );
-
-  if ( length < 0 ) {
-    log("failed to read from buffer");
-  }  
-
-log("inotify setted up");
-/*
-while ( i < length ) {
-    struct inotify_event *event = ( struct inotify_event * ) &buffer[ i ];
-    if(event->len) {
-        if ( event->mask & IN_MODIFY ) {
-            log("/tmp/power was modified");
-        }
-    }
-}
-*/
-while ( i < length ) {
-    struct inotify_event *event = ( struct inotify_event * ) &buffer[ i ];
-    if ( event->len ) {
-      if ( event->mask & IN_CREATE ) {
-        if ( event->mask & IN_ISDIR ) {
-          printf( "The directory %s was created.\n", event->name );       
-        }
-        else {
-          printf( "The file %s was created.\n", event->name );
-        }
-      }
-      else if ( event->mask & IN_DELETE ) {
-        if ( event->mask & IN_ISDIR ) {
-          printf( "The directory %s was deleted.\n", event->name );       
-        }
-        else {
-          printf( "The file %s was deleted.\n", event->name );
-        }
-      }
-      else if ( event->mask & IN_MODIFY ) {
-        if ( event->mask & IN_ISDIR ) {
-          printf( "The directory %s was modified.\n", event->name );
-        }
-        else {
-          printf( "The file %s was modified.\n", event->name );
-        }
-      }
-    }
-    i += EVENT_SIZE + event->len;
-  }
-
-  ( void ) inotify_rm_watch( fd, wd );
-  ( void ) close( fd );
+  do {
+    struct input_event ev;
+    rc = libevdev_next_event(dev, LIBEVDEV_READ_FLAG_NORMAL, &ev);
+    if (rc == 0)
+      printf("Event: %s %s %d\n", libevdev_event_type_get_name(ev.type),
+             libevdev_event_code_get_name(ev.type, ev.code), ev.value);
+  } while (rc == 1 || rc == 0 || rc == -EAGAIN);
 }

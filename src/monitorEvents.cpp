@@ -1,5 +1,9 @@
+#include <chrono>
 #include <iostream>
+#include <string>
+#include <thread>
 
+#include "functions.h"
 #include "main.h"
 #include "monitorEvents.h"
 
@@ -13,8 +17,10 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include "libevdev/libevdev.h"
 #include "libevdev/config.h"
+#include "libevdev/libevdev.h"
+
+using namespace std;
 
 void startMonitoringDev() {
   log("Starting monitoring events");
@@ -28,21 +34,28 @@ void startMonitoringDev() {
     fprintf(stderr, "Failed to init libevdev (%s)\n", strerror(-rc));
     exit(1);
   }
-  printf("Input device name: \"%s\"\n", libevdev_get_name(dev));
-  printf("Input device ID: bus %#x vendor %#x product %#x\n",
-         libevdev_get_id_bustype(dev), libevdev_get_id_vendor(dev),
-         libevdev_get_id_product(dev));
-  if (!libevdev_has_event_type(dev, EV_REL) ||
-      !libevdev_has_event_code(dev, EV_KEY, BTN_LEFT)) {
-    printf("This device does not look like a mouse\n");
-    exit(1);
-  }
 
+  log("Input device name: " + (string)libevdev_get_name(dev));
+  log("Input device ID: bus " + to_string(libevdev_get_id_bustype(dev)) +
+      " ,vendor" + to_string(libevdev_get_id_vendor(dev)) + " ,product" +
+      to_string(libevdev_get_id_product(dev)));
   do {
+
     struct input_event ev;
     rc = libevdev_next_event(dev, LIBEVDEV_READ_FLAG_NORMAL, &ev);
-    if (rc == 0)
-      printf("Event: %s %s %d\n", libevdev_event_type_get_name(ev.type),
-             libevdev_event_code_get_name(ev.type, ev.code), ev.value);
+    if (rc == 0) {
+      string codeName = (string)libevdev_event_code_get_name(ev.type, ev.code);
+      log("Input event received: " +
+          (string)libevdev_event_type_get_name(ev.type) + codeName +
+          to_string(ev.value));
+
+      if (codeName == "KEY_POWER" and ev.value == 1) {
+        log("Sending message to sleep");
+      }
+    }
+
+    std::chrono::milliseconds timespan(150);
+    std::this_thread::sleep_for(timespan);
+
   } while (rc == 1 || rc == 0 || rc == -EAGAIN);
 }

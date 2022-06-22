@@ -4,19 +4,11 @@
 
 #include "main.h"
 #include "monitorEvents.h"
+#include "functions.h"
 
-
-bool logEnabled = false;
+extern bool logEnabled;
 
 using namespace std;
-
-void log(string to_log)
-{
-    if(logEnabled == true)
-    {
-        std::cout << to_log << std::endl;
-    }
-}
 
 int main()
 {

@@ -2,9 +2,9 @@
 #include <string>
 #include <thread>
 
-#include "main.h"
 #include "monitorEvents.h"
 #include "functions.h"
+#include "watchdog.h"
 
 extern bool logEnabled;
 
@@ -24,9 +24,12 @@ int main()
             log("Debug mode is activated");
         }
     }
-    std::thread monitor_dev(startMonitoringDev);
+    std::thread monitorDev(startMonitoringDev);
     // https://stackoverflow.com/questions/7381757/c-terminate-called-without-an-active-exception
-    monitor_dev.join();
+    std::thread watchdogThread(startWatchdog);
     
+    
+    monitorDev.join();
+    watchdogThread.join();
     return 0;
 }

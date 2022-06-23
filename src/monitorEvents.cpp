@@ -1,10 +1,10 @@
 #include <chrono>
 #include <iostream>
+#include <mutex>
 #include <string>
 #include <thread>
 
 #include "functions.h"
-#include "main.h"
 #include "monitorEvents.h"
 
 // libevdev
@@ -22,6 +22,12 @@
 
 using namespace std;
 
+extern bool watchdogStartJob;
+extern mutex watchdogStartJob_mtx;
+
+extern goSleepCondition newSleepCondition;
+extern mutex newSleepCondition_mtx;
+
 void startMonitoringDev() {
   log("Starting monitoring events");
 
@@ -31,7 +37,7 @@ void startMonitoringDev() {
   int rc = libevdev_new_from_fd(fd, &dev);
 
   if (rc < 0) {
-    fprintf(stderr, "Failed to init libevdev (%s)\n", strerror(-rc));
+    log("Failed to init libevdev: " + (string)strerror(-rc));
     exit(1);
   }
 
@@ -39,6 +45,9 @@ void startMonitoringDev() {
   log("Input device ID: bus " + to_string(libevdev_get_id_bustype(dev)) +
       " ,vendor" + to_string(libevdev_get_id_vendor(dev)) + " ,product" +
       to_string(libevdev_get_id_product(dev)));
+  
+  
+  std::chrono::milliseconds timespan(150);
   do {
 
     struct input_event ev;
@@ -46,15 +55,22 @@ void startMonitoringDev() {
     if (rc == 0) {
       string codeName = (string)libevdev_event_code_get_name(ev.type, ev.code);
       log("Input event received: " +
-          (string)libevdev_event_type_get_name(ev.type) + codeName +
+          (string)libevdev_event_type_get_name(ev.type) + codeName + " " +
           to_string(ev.value));
 
       if (codeName == "KEY_POWER" and ev.value == 1) {
         log("Sending message to sleep");
+
+        waitMutex(&watchdogStartJob_mtx);
+        watchdogStartJob = true;
+        watchdogStartJob_mtx.unlock();
+
+        waitMutex(&newSleepCondition_mtx);
+        newSleepCondition = powerButton;
+        newSleepCondition_mtx.unlock();
       }
     }
 
-    std::chrono::milliseconds timespan(150);
     std::this_thread::sleep_for(timespan);
 
   } while (rc == 1 || rc == 0 || rc == -EAGAIN);

@@ -3,6 +3,4 @@
 
 void startMonitoringDev();
 
-int print_events(int fd);
-
 #endif

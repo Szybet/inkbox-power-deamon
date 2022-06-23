@@ -2,8 +2,8 @@
     {
         "name": "Arm kobo",
         "compilers": {
-            "C": "/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/bin/arm-kobo-linux-gnueabihf-gcc",
-            "CXX": "/mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/bin/arm-kobo-linux-gnueabihf-g++"
+            "C": "/home/build/inkbox/kernel/toolchain/armv7l-linux-musleabihf-cross/bin/armv7l-linux-musleabihf-gcc",
+            "CXX": "/home/build/inkbox/kernel/toolchain/armv7l-linux-musleabihf-cross/bin/armv7l-linux-musleabihf-g++"
         }
     }
 ]

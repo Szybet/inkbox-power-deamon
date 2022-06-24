@@ -17,4 +17,12 @@ enum goSleepCondition
     halSensor   
 };
 
+enum sleepBool
+{
+    Nothing,
+    Prepare,
+    GoingSleep,
+    After,   
+};
+
 #endif

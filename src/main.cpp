@@ -24,9 +24,9 @@ int main()
             log("Debug mode is activated");
         }
     }
-    std::thread monitorDev(startMonitoringDev);
+    thread monitorDev(startMonitoringDev);
     // https://stackoverflow.com/questions/7381757/c-terminate-called-without-an-active-exception
-    std::thread watchdogThread(startWatchdog);
+    thread watchdogThread(startWatchdog);
     
     
     monitorDev.join();

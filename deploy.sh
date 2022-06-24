@@ -5,6 +5,7 @@
 # /mnt/HDD/Project/qt-kobo/x-tools/arm-kobo-linux-gnueabihf/bin/arm-kobo-linux-gnueabihf-g++ -o ../inkbox-power-deamon main.cpp
 
 export PATH=$PATH:/home/build/inkbox/kernel/toolchain/armv7l-linux-musleabihf-cross/bin
+rm -rf build
 mkdir build
 cd build
 cmake ../ -DCMAKE_TOOLCHAIN_FILE=../kobo.cmake
@@ -15,7 +16,7 @@ servername="root@10.42.0.28"
 passwd="root"
 
 sshpass -p $passwd ssh $servername "bash -c \"ifsctl mnt rootfs rw\""
-sshpass -p $passwd ssh $servername "bash -c \"rm inkbox-power-deamon\""
+sshpass -p $passwd ssh $servername "bash -c \"rm /inkbox-power-deamon\""
 sshpass -p $passwd ssh $servername "bash -c \"killall -9 inkbox-power-deamon\""
 sshpass -p $passwd scp build/inkbox-power-deamon $servername:/
 

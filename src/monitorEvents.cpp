@@ -42,12 +42,13 @@ void startMonitoringDev() {
   }
 
   log("Input device name: " + (string)libevdev_get_name(dev));
-  log("Input device ID: bus " + to_string(libevdev_get_id_bustype(dev)) +
-      " ,vendor" + to_string(libevdev_get_id_vendor(dev)) + " ,product" +
+  log("Input device bus " + to_string(libevdev_get_id_bustype(dev)) +
+      " vendor: " + to_string(libevdev_get_id_vendor(dev)) + " product: " +
       to_string(libevdev_get_id_product(dev)));
   
   
-  std::chrono::milliseconds timespan(150);
+  chrono::milliseconds timespan(150);
+  chrono::milliseconds afterEventWait(1000);
   do {
 
     struct input_event ev;
@@ -68,10 +69,12 @@ void startMonitoringDev() {
         waitMutex(&newSleepCondition_mtx);
         newSleepCondition = powerButton;
         newSleepCondition_mtx.unlock();
+
+        //this_thread::sleep_for(afterEventWait);
       }
     }
 
-    std::this_thread::sleep_for(timespan);
+    this_thread::sleep_for(timespan);
 
   } while (rc == 1 || rc == 0 || rc == -EAGAIN);
 }

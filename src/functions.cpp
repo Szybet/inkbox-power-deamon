@@ -21,6 +21,8 @@ mutex watchdogStartJob_mtx;
 goSleepCondition newSleepCondition = None;
 mutex newSleepCondition_mtx;
 
+sleepBool sleepJob = Nothing;
+mutex sleep_mtx;
 
 //
 

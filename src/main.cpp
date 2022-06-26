@@ -5,8 +5,10 @@
 #include "monitorEvents.h"
 #include "functions.h"
 #include "watchdog.h"
+#include "fbinkFunctions.h"
 
 extern bool logEnabled;
+extern int fbfd;
 
 using namespace std;
 
@@ -24,11 +26,15 @@ int main()
             log("Debug mode is activated");
         }
     }
+
+    prepareVariables();
+    initFbink();
+
     thread monitorDev(startMonitoringDev);
     // https://stackoverflow.com/questions/7381757/c-terminate-called-without-an-active-exception
     thread watchdogThread(startWatchdog);
-    
-    
+
+
     monitorDev.join();
     watchdogThread.join();
     return 0;

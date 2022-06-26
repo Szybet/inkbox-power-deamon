@@ -3,7 +3,7 @@
 LOCKSCREEN=$(cat /opt/config/12-lockscreen/config 2>/dev/null)
 DEVICE=$(cat /opt/inkbox_device)
 
-echo "preparing" > /tmp/sleep_status
+#echo "preparing" > /tmp/sleep_status
 
 sleep 1
 chroot /kobo /usr/bin/fbgrab "/external_root/tmp/dump.png"

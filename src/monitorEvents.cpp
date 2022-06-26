@@ -17,7 +17,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include "libevdev/config.h"
+#include "config.h"
 #include "libevdev/libevdev.h"
 
 using namespace std;

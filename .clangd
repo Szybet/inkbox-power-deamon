@@ -1,0 +1,4 @@
+CompileFlags:
+  Add: 
+    - "-I=lib/FBink/"
+    - "-I=lib/libevdev/"

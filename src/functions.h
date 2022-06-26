@@ -10,6 +10,14 @@ void log(string message);
 
 void waitMutex(mutex* exampleMutex);
 
+void prepareVariables();
+
+string readConfigString(string path);
+
+void writeFileString(string path, string stringToWrite);
+
+void Screenshot();
+
 enum goSleepCondition
 {
     None,

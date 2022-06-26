@@ -9,12 +9,14 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
 include_directories(${CMAKE_SOURCE_DIR}/lib/FBInk/)
 include_directories(${CMAKE_SOURCE_DIR}/lib/libevdev/) 
-include_directories(${CMAKE_SOURCE_DIR}/lib/FBInk/libi2c-staged/include) 
+include_directories(${CMAKE_SOURCE_DIR}/lib/FBInk/libi2c-staged/include/) 
+include_directories(${CMAKE_SOURCE_DIR}/lib/boost_1_79_0/)
 
 # https://stackoverflow.com/questions/3201154/automatically-add-all-files-in-a-folder-to-a-target-using-cmake
 file(GLOB fileSrc
      "src/*.h"
      "src/*.cpp"
+     "src/*.c"
 )
 
 link_directories(${CMAKE_SOURCE_DIR}/lib/libevdev/install/lib/)

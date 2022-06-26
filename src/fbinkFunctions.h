@@ -2,6 +2,7 @@
 #define FBINK_FUNCTIONS_H
 
 #include <string>
+#include "fbink.h"
 
 using namespace std;
 
@@ -13,4 +14,7 @@ void clearScreen();
 
 void printImage(string path);
 
+void screenshotFbink();
+
+void restoreFbink();
 #endif

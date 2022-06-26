@@ -2,6 +2,7 @@
 #include "functions.h"
 
 #include <cstdlib>
+#include <iostream>
 #include <mutex>
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,6 +11,8 @@
 #include "fbink.h"
 
 extern int fbfd;
+
+extern FBInkDump dump;
 
 void initFbink() {
   fbfd = fbink_open();
@@ -73,9 +76,36 @@ void clearScreen() {
   fbink_cls(fbfd, &fbink_cfg, &cls_rect, false);
 }
 
-void printImage(string path)
-{
-    FBInkConfig fbink_cfg = {0};
+void printImage(string path) {
+  FBInkConfig fbink_cfg = {0};
 
-    fbink_print_image(fbfd, path.c_str(), 0, 0, &fbink_cfg);
+  fbink_print_image(fbfd, path.c_str(), 0, 0, &fbink_cfg);
+}
+
+void screenshotFbink() {
+  /*
+  string mainString = "/usr/bin/chroot /kobo /usr/bin/fbgrab ";
+  mainString = mainString + "\"" + path + "\"";
+  system(mainString.c_str());
+  */
+  FBInkConfig fbink_cfg = {0};
+
+  if (fbink_init(fbfd, &fbink_cfg) < 0) {
+    log("Failed to initialize FBInk, aborting");
+  }
+
+  if (fbink_dump(fbfd, &dump) < 0) {
+    log("something went wrong with bump");
+  };
+}
+
+void restoreFbink() {
+  FBInkConfig fbink_cfg = {0};
+
+  if (fbink_init(fbfd, &fbink_cfg) < 0) {
+    log("Failed to initialize FBInk, aborting");
+  }
+
+  fbink_restore(fbfd, &fbink_cfg, &dump);
+  free(dump.data);
 }

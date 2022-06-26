@@ -2,6 +2,9 @@
 #include "cinematicBrightness.h"
 #include "fbinkFunctions.h"
 #include "functions.h"
+#include "fbink.h"
+#include "AppsFreeze.h"
+#include "Wifi.h"
 
 #include <exception>
 #include <mutex>
@@ -10,6 +13,10 @@
 
 extern sleepBool sleepJob;
 extern mutex sleep_mtx;
+
+extern FBInkDump dump;
+
+extern sleepBool watchdogNextStep;
 
 // Explanation why this code looks garbage
 // threads in cpp cant be killed from outside, so its needed to check every step
@@ -32,11 +39,9 @@ void CEP() {
 void prepareSleep() {
   log("Launching prepareSleep");
   CEP();
-  // writeFileString("/tmp/sleep_status", "preparing");
-  Screenshot();
+  screenshotFbink();
   CEP();
-  // Clean the screen here
-  CEP();
+  clearScreen();
   sleepScreen();
   CEP();
   writeFileString("/tmp/sleep_standby", "true");
@@ -44,21 +49,21 @@ void prepareSleep() {
   freezeApps();
   CEP();
   setBrightnessCin(0, getBrightness());
-
+  saveBrightness(0);
+  CEP();
+  turnOffWifi();
+  CEP();
+  writeFileString("/kobo/inkbox/remount", "false");
+  watchdogNextStep = GoingSleep;
   log("Exiting prepareSleep");
 }
-
-// Take a screenshot with fbgrab and restore it upon wake-up, in /tmp/dump.png
-void Screenshot() {}
 
 // Show a text Sleeping, but also enable with a config a screensaver, and
 // writing Sleeping anyway with background
 void sleepScreen() {
-  clearScreen();
-  fbinkWriteCenter("Sleeping");
   printImage("/image.jpg");
+  fbinkWriteCenter("Sleeping");
 }
 
 // first send a message to a fifo pipe for qt sleeping next read app list from
 // /data/config/20-sleep_daemon and freeze them. user apps: ???
-void freezeApps() {}

@@ -8,12 +8,15 @@
 #include <stdexcept>
 #include <string>
 #include <thread>
+#include <vector>
 
+#include "fbink.h"
 #include "functions.h"
 
 using namespace std;
 
-// Variables ( only readed )
+// Variables ( that there is no risk that they will be readed at the same tame
+// by many threads )
 
 bool logEnabled = false;
 
@@ -23,6 +26,13 @@ bool lockscreen;
 int CinematicBrightnessdelayMs;
 
 int fbfd;
+
+FBInkDump dump;
+
+vector<int> AppsPids;
+
+// im not sure if this one doesnt need a mutex. will leave it for now
+sleepBool watchdogNextStep = Nothing;
 
 // Mutex variables
 
@@ -58,21 +68,25 @@ void waitMutex(mutex *exampleMutex) {
 }
 
 void prepareVariables() {
-    model = readConfigString("/opt/inkbox_device");
-    log("Running on: " + model);
+  model = readConfigString("/opt/inkbox_device");
+  log("Running on: " + model);
 
-
-    string stringRead = readConfigString("/opt/config/12-lockscreen/config");
-    if(stringRead == "true")
-    {
-        lockscreen = true;
-    } else {
-        lockscreen = false;
-    }
-    log("lockscreen is: " + stringRead);
+  string stringRead = readConfigString("/opt/config/12-lockscreen/config");
+  if (stringRead == "true") {
+    lockscreen = true;
+  } else {
+    lockscreen = false;
+  }
+  log("lockscreen is: " + stringRead);
 
   // in the future set it through config file
-  CinematicBrightnessdelayMs = 300;
+  CinematicBrightnessdelayMs = 50;
+
+  dump = {0};
+}
+
+void ManageConfig() {
+  // /data/config/20-sleep_daemon
 }
 
 string readConfigString(string path) {
@@ -91,17 +105,31 @@ string readConfigString(string path) {
   return returnData;
 }
 
-void writeFileString(string path, string stringToWrite)
+void writeFileString(string path, string stringToWrite) {
+  fstream File;
+  File.open(path, ios::out);
+  if (!File) {
+    log("File not created");
+    exit(EXIT_FAILURE);
+  } else {
+    File << stringToWrite;
+    File.close();
+    log("Writed: \"" + stringToWrite + "\" to: " + path);
+  }
+}
+
+string readFile(string path) {
+  ifstream input_file(path);
+  if (!input_file.is_open()) {
+    log("Could not open file");
+    exit(EXIT_FAILURE);
+  }
+  return string((std::istreambuf_iterator<char>(input_file)),
+                std::istreambuf_iterator<char>());
+}
+
+bool is_file_exist(string fileName)
 {
-    fstream File;
-	File.open(path, ios::out);
-	if (!File) {
-		log("File not created");
-        exit(EXIT_FAILURE);
-	}
-	else {
-		File << stringToWrite;
-		File.close();
-        log("Writed: \"" + stringToWrite + "\" to: " + path);
-	}
+    std::ifstream infile(fileName);
+    return infile.good();
 }

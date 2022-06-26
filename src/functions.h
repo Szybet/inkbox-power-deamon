@@ -12,11 +12,15 @@ void waitMutex(mutex* exampleMutex);
 
 void prepareVariables();
 
+void ManageConfig();
+
 string readConfigString(string path);
 
 void writeFileString(string path, string stringToWrite);
 
-void Screenshot();
+string readFile(string path);
+
+bool is_file_exist(string fileName);
 
 enum goSleepCondition
 {

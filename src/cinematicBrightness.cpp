@@ -2,6 +2,7 @@
 #include "functions.h"
 #include <chrono>
 #include <iostream>
+#include <string>
 #include <thread>
 
 #include <cstdlib>
@@ -14,7 +15,6 @@ extern string model;
 
 extern int CinematicBrightnessdelayMs;
 
-// it depends on /opt/config/03-brightness/config
 void setBrightnessCin(int levelToSet, int currentLevel) {
   int device;
   if ((device = open("/dev/ntx_io", O_RDWR)) == -1) {
@@ -27,17 +27,21 @@ void setBrightnessCin(int levelToSet, int currentLevel) {
     setBrightness(device, currentLevel);
     this_thread::sleep_for(timespan);
   }
-
   close(device);
 }
 
-void saveBrightness(int level) {}
+void saveBrightness(int level) {
+  writeFileString("/data/config/03-brightness/config", to_string(level));
+  writeFileString("/tmp/savedBrightness", to_string(level));
+}
 
-void restoreBrightness(int level) {}
+int restoreBrightness() {
+  return stoi(readConfigString("/tmp/savedBrightness"));
+}
 
 void setBrightness(int device, int level) { ioctl(device, 241, level); }
 
-// doesnt really work
+// bugs?
 int getBrightness() {
   if (model == "n613") {
     return stoi(readConfigString("/opt/config/03-brightness/config"));
@@ -46,7 +50,7 @@ int getBrightness() {
         readConfigString("/sys/class/backlight/mxc_msp430_fl.0/brightness"));
   } else {
     return stoi(
-        readConfigString("/sys/class/backlight/mxc_msp430.0/brightness"));
+        readConfigString("/sys/class/backlight/mxc_msp430.0/actual_brightness"));
   }
 }
 

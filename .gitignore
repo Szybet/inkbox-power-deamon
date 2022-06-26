@@ -37,3 +37,6 @@ CmakeFIles
 
 # clangd
 .cache
+
+# mine
+boost_1_79_0

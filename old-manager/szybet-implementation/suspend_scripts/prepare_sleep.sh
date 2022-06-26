@@ -79,7 +79,7 @@ if [ -d "/sys/class/net/${WIFI_DEV}" ]; then
 		fi
 	fi
 	
-	# killall -q dhcpcd wpa_supplicant
+	killall -q dhcpcd wpa_supplicant
 	# Uncomment this later
 	ifconfig "${WIFI_DEV}" down 2>/dev/null
 	if [ "${DEVICE}" == "n705" ] || [ "${DEVICE}" == "n905b" ] || [ "${DEVICE}" == "n905c" ] || [ "${DEVICE}" == "n613" ] || [ "${DEVICE}" == "n437" ]; then

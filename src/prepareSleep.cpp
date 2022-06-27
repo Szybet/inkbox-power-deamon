@@ -41,7 +41,7 @@ void prepareSleep() {
   CEP();
   screenshotFbink();
   CEP();
-  clearScreen();
+  clearScreen(false);
   sleepScreen();
   CEP();
   writeFileString("/tmp/sleep_standby", "true");
@@ -51,6 +51,7 @@ void prepareSleep() {
   setBrightnessCin(0, getBrightness());
   saveBrightness(0);
   CEP();
+  // actually we should check if modules of wifi are actually loaded before this
   turnOffWifi();
   CEP();
   writeFileString("/kobo/inkbox/remount", "false");
@@ -61,7 +62,7 @@ void prepareSleep() {
 // Show a text Sleeping, but also enable with a config a screensaver, and
 // writing Sleeping anyway with background
 void sleepScreen() {
-  printImage("/image.jpg");
+  //printImage("/image.jpg");
   fbinkWriteCenter("Sleeping");
 }
 

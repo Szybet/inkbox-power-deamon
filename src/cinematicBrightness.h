@@ -5,7 +5,7 @@ void setBrightnessCin(int levelToSet, int currentLevel);
 
 void saveBrightness(int level);
 
-void restoreBrightness(int level);
+int restoreBrightness();
 
 void setBrightness(int device, int level);
 

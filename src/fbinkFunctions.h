@@ -10,11 +10,14 @@ void initFbink();
 
 int fbinkWriteCenter(string stringToWrite);
 
-void clearScreen();
+void clearScreen(bool darkmodeset);
 
 void printImage(string path);
 
 void screenshotFbink();
 
 void restoreFbink();
+
+void closeFbink();
+
 #endif

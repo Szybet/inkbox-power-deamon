@@ -52,18 +52,29 @@ void startWatchdog() {
       } else if (sleepJob == Prepare) {
         sleepJob = After;
         sleep_mtx.unlock();
-        prepareThread.join();
+
+        if (prepareThread.joinable() == true)
+          prepareThread.join();
+
         afterThread = thread(afterSleep);
       } else if (sleepJob == After) {
         sleepJob = Prepare;
         sleep_mtx.unlock();
-        afterThread.join();
+
+        if (prepareThread.joinable() == true)
+          prepareThread.join();
+        if (goingThread.joinable() == true)
+          goingThread.join();
+
         prepareThread = thread(prepareSleep);
       } else if (sleepJob == GoingSleep) {
         // device here what to do with a config
         sleepJob = After;
         sleep_mtx.unlock();
-        prepareThread.join();
+
+        if (goingThread.joinable() == true)
+          goingThread.join();
+
         afterThread = thread(afterSleep);
       }
     }
@@ -73,13 +84,25 @@ void startWatchdog() {
       waitMutex(&sleep_mtx);
       sleepJob = Nothing;
       sleep_mtx.unlock();
-      log("im here testing");
-      // its here dying. make a function based on .joinable to joing a thread
-      // and use that - note for tommorow me
-      prepareThread.join();
-      afterThread.join();
-      goingThread.join();
-      log("im here testing dead");
+
+      // I wanted to write a function for it:
+      /*
+      void join_smarter(thread threadArg)
+      {
+        if(threadArg.joinable() == true)
+        {
+          threadArg.join();
+        }
+      }
+      */
+      // but it doesnt work, some weird error so...
+      if (prepareThread.joinable() == true)
+        prepareThread.join();
+      if (afterThread.joinable() == true)
+        afterThread.join();
+      if (goingThread.joinable() == true)
+        goingThread.join();
+
       if (watchdogNextStep == After) {
         waitMutex(&sleep_mtx);
         sleepJob = After;
@@ -94,6 +117,7 @@ void startWatchdog() {
         log("Its impossible. you will never see this log");
         exit(EXIT_FAILURE);
       }
+      watchdogNextStep = Nothing;
     }
     std::this_thread::sleep_for(timespan);
   }

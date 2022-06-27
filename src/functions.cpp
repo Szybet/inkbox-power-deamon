@@ -34,6 +34,8 @@ vector<int> AppsPids;
 // im not sure if this one doesnt need a mutex. will leave it for now
 sleepBool watchdogNextStep = Nothing;
 
+bool darkmode;
+
 // Mutex variables
 
 bool watchdogStartJob = false;
@@ -68,21 +70,30 @@ void waitMutex(mutex *exampleMutex) {
 }
 
 void prepareVariables() {
+  log("Reading variables");
   model = readConfigString("/opt/inkbox_device");
   log("Running on: " + model);
 
-  string stringRead = readConfigString("/opt/config/12-lockscreen/config");
-  if (stringRead == "true") {
+  string stringRead1 = readConfigString("/opt/config/12-lockscreen/config");
+  if (stringRead1 == "true") {
     lockscreen = true;
   } else {
     lockscreen = false;
   }
-  log("lockscreen is: " + stringRead);
+  log("lockscreen is: " + stringRead1);
 
   // in the future set it through config file
   CinematicBrightnessdelayMs = 50;
 
   dump = {0};
+
+  string stringRead2 = readConfigString("/opt/config/12-lockscreen/config");
+  if(stringRead2 == "true")
+  {
+    darkmode = true;
+  } else {
+    darkmode = false;
+  }
 }
 
 void ManageConfig() {

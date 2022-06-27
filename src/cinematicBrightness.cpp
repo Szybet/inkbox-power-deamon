@@ -23,7 +23,12 @@ void setBrightnessCin(int levelToSet, int currentLevel) {
   }
   chrono::milliseconds timespan(CinematicBrightnessdelayMs);
   while (currentLevel != levelToSet) {
-    currentLevel = currentLevel - 1;
+    if (currentLevel < levelToSet) {
+      currentLevel = currentLevel + 1;
+    } else {
+      currentLevel = currentLevel - 1;
+    }
+
     setBrightness(device, currentLevel);
     this_thread::sleep_for(timespan);
   }
@@ -49,8 +54,8 @@ int getBrightness() {
     return stoi(
         readConfigString("/sys/class/backlight/mxc_msp430_fl.0/brightness"));
   } else {
-    return stoi(
-        readConfigString("/sys/class/backlight/mxc_msp430.0/actual_brightness"));
+    return stoi(readConfigString(
+        "/sys/class/backlight/mxc_msp430.0/actual_brightness"));
   }
 }
 

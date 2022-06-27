@@ -16,6 +16,7 @@
 extern vector<int> AppsPids;
 
 // https://ofstack.com/C++/9293/linux-gets-pid-based-on-pid-process-name-and-pid-of-c.html
+// this function could be more efficient by taking a vector as a argument, maybe in the future
 int getPidByName(string task_name) {
   struct dirent *entry = nullptr;
   DIR *dp = nullptr;

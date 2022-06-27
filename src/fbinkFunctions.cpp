@@ -58,8 +58,9 @@ int fbinkWriteCenter(string stringToWrite) {
   return EXIT_SUCCESS;
 }
 
-void clearScreen() {
+void clearScreen(bool darkmodeset) {
   FBInkConfig fbink_cfg = {0};
+  fbink_cfg.is_nightmode = darkmodeset;
 
   if (fbink_init(fbfd, &fbink_cfg) < 0) {
     log("Failed to initialize FBInk, aborting");
@@ -94,9 +95,12 @@ void screenshotFbink() {
     log("Failed to initialize FBInk, aborting");
   }
 
+  log("Inited fbink in screenshotFbink");
+
   if (fbink_dump(fbfd, &dump) < 0) {
     log("something went wrong with bump");
   };
+  log("screenshot done");
 }
 
 void restoreFbink() {
@@ -108,4 +112,9 @@ void restoreFbink() {
 
   fbink_restore(fbfd, &fbink_cfg, &dump);
   free(dump.data);
+}
+
+void closeFbink()
+{
+  fbink_close(fbfd);
 }

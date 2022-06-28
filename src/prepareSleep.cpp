@@ -40,6 +40,7 @@ void prepareSleep() {
   log("Launching prepareSleep");
   CEP();
   screenshotFbink();
+  std::this_thread::sleep_for(std::chrono::milliseconds(300));
   CEP();
   clearScreen(false);
   sleepScreen();
@@ -48,8 +49,8 @@ void prepareSleep() {
   writeFileString("/tmp/sleep_mode", "true");
   freezeApps();
   CEP();
+  saveBrightness(getBrightness());
   setBrightnessCin(0, getBrightness());
-  saveBrightness(0);
   CEP();
   // actually we should check if modules of wifi are actually loaded before this
   turnOffWifi();

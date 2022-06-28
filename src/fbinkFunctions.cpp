@@ -111,7 +111,7 @@ void restoreFbink() {
   }
 
   fbink_restore(fbfd, &fbink_cfg, &dump);
-  free(dump.data);
+  //free(dump.data);
 }
 
 void closeFbink()

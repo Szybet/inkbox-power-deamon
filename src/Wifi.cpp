@@ -72,7 +72,7 @@ void turnOffWifi() {
     }
     // sleeping has problems with wifi, so wait additional time only when it is
     system("/bin/sync");
-    std::this_thread::sleep_for(std::chrono::milliseconds(9000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(15000));
   }
 }
 

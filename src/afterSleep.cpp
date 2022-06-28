@@ -15,9 +15,12 @@
 #include <sys/ioctl.h>
 #include <thread>
 #include <unistd.h>
+#include <chrono>
 
 extern sleepBool sleepJob;
 extern mutex sleep_mtx;
+
+extern FBInkDump dump;
 
 extern bool darkmode;
 
@@ -49,7 +52,7 @@ void afterSleep() {
   CEA();
   writeFileString("/tmp/sleep_mode", "false");
 
-  initFbink();
+  //initFbink();
 
   if (darkmode == true) {
     clearScreen(true);
@@ -63,6 +66,7 @@ void afterSleep() {
   // Don't
 
   restoreFbink();
+  std::this_thread::sleep_for(std::chrono::milliseconds(300));
   CEA();
   unfreezeApps();
   CEA();

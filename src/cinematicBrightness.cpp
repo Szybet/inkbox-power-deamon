@@ -36,7 +36,6 @@ void setBrightnessCin(int levelToSet, int currentLevel) {
 }
 
 void saveBrightness(int level) {
-  writeFileString("/data/config/03-brightness/config", to_string(level));
   writeFileString("/tmp/savedBrightness", to_string(level));
 }
 

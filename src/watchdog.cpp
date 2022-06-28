@@ -68,13 +68,15 @@ void startWatchdog() {
 
         prepareThread = thread(prepareSleep);
       } else if (sleepJob == GoingSleep) {
-        // device here what to do with a config
+        log("Watchdog goes next with Goingsleep");
         sleepJob = After;
         sleep_mtx.unlock();
 
+        log("trying to join goingThread");
         if (goingThread.joinable() == true)
           goingThread.join();
 
+        log("Launching afterSleep thread from GoingSleep watchdog state");
         afterThread = thread(afterSleep);
       }
     }

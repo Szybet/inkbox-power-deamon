@@ -23,7 +23,7 @@ sshpass -p $passwd scp build/inkbox-power-deamon $servername:/
 sshpass -p $passwd ssh $servername "bash -c \"sync\""
 
 # Normal launch
-sshpass -p $passwd ssh $servername "bash -c \"DEBUG=true /inkbox-power-deamon\""
+# sshpass -p $passwd ssh $servername "bash -c \"DEBUG=true /inkbox-power-deamon\""
 
 # For chroot
 #sshpass -p $passwd ssh $servername "bash -c \"rm /kobo/inkbox-power-deamon\""

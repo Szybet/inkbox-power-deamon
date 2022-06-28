@@ -77,4 +77,5 @@ void startMonitoringDev() {
     this_thread::sleep_for(timespan);
 
   } while (rc == 1 || rc == 0 || rc == -EAGAIN);
+  log("Monitor events died :(");
 }

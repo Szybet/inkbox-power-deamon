@@ -7,4 +7,6 @@ using namespace std;
 
 void goSleep();
 
+void smartWait(int timeToWait);
+
 #endif

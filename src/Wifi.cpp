@@ -48,21 +48,25 @@ void turnOffWifi() {
     WIFI_DEV = "eth0";
   }
 
-  if (readConfigString("/sys/class/net/" + WIFI_DEV + "/operstate") == "up") {
-    writeFileString("/run/was_connected_to_wifi", "true");
+  string wifiDevPath = "/sys/class/net/" + WIFI_DEV + "/operstate";
+  if (is_file_exist(wifiDevPath) == true) {
+    if (readConfigString("/sys/class/net/" + WIFI_DEV + "/operstate") == "up") {
+      writeFileString("/run/was_connected_to_wifi", "true");
 
-    killProcess("dhcpcd");
-    killProcess("wpa_supplicant");
-    killProcess("udhcpc");
+      killProcess("dhcpcd");
+      killProcess("wpa_supplicant");
+      killProcess("udhcpc");
 
-    string turnOffInterface = "/sbin/ifconfig " + WIFI_DEV + " down";
-    system(turnOffInterface.c_str());
+      string turnOffInterface = "/sbin/ifconfig " + WIFI_DEV + " down";
+      system(turnOffInterface.c_str());
 
-    if (model == "n705" or model == "n905b" or model == "n905c" or
-        model == "n613" or model == "n437") {
-      system("wlarm_le down");
+      if (model == "n705" or model == "n905b" or model == "n905c" or
+          model == "n613" or model == "n437") {
+        system("wlarm_le down");
+      }
+    } else {
+      log("Wifi is already off, but modules aren't unloaded");
     }
-
     if (delete_module(WIFI_MODULE.c_str(), O_NONBLOCK) != 0) {
       log("Cant unload module: " + WIFI_MODULE);
     }
@@ -70,9 +74,12 @@ void turnOffWifi() {
     if (delete_module(SDIO_WIFI_PWR_MODULE.c_str(), O_NONBLOCK) != 0) {
       log("Cant unload module: " + SDIO_WIFI_PWR_MODULE);
     }
-    // sleeping has problems with wifi, so wait additional time only when it is
-    system("/bin/sync");
-    // std::this_thread::sleep_for(std::chrono::milliseconds(15000));
+      // sleeping has problems with wifi, so wait additional time only when it
+      // is
+      system("/bin/sync");
+      // std::this_thread::sleep_for(std::chrono::milliseconds(15000));
+  } else {
+    log("Wifi is already off?");
   }
 }
 
@@ -99,18 +106,20 @@ void turnOnWifi() {
     SDIO_WIFI_PWR_MODULE = "/modules/sdio_wifi_pwr.ko";
     WIFI_DEV = "eth0";
   }
-  if (readConfigString("/run/was_connected_to_wifi") == "true") {
-    load_module(WIFI_MODULE);
-    std::this_thread::sleep_for(std::chrono::milliseconds(300));
-    load_module(SDIO_WIFI_PWR_MODULE);
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+  if (is_file_exist("/run/was_connected_to_wifi") == true) {
+    if (readConfigString("/run/was_connected_to_wifi") == "true") {
+      load_module(WIFI_MODULE);
+      std::this_thread::sleep_for(std::chrono::milliseconds(300));
+      load_module(SDIO_WIFI_PWR_MODULE);
+      std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-    string wifiInterfaceUp = "/sbin/ifconfig " + WIFI_DEV + " up";
-    system(wifiInterfaceUp.c_str());
+      string wifiInterfaceUp = "/sbin/ifconfig " + WIFI_DEV + " up";
+      system(wifiInterfaceUp.c_str());
 
-    if (model == "n705" or model == "n905b" or model == "n905c" or
-        model == "n613" or model == "n437") {
-      system("/usr/bin/wlarm_le up");
+      if (model == "n705" or model == "n905b" or model == "n905c" or
+          model == "n613" or model == "n437") {
+        system("/usr/bin/wlarm_le up");
+      }
     }
 
     if (is_file_exist("/data/config/17-wifi_connection_information/essid") ==
@@ -142,7 +151,7 @@ void load_module(string path) {
   read(fd, image, image_size);
   close(fd);
   if (init_module(image, image_size, params) != 0) {
-    log("init_module");
+    log("could not init_module");
     exit(EXIT_FAILURE);
   }
   free(image);

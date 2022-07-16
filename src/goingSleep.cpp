@@ -110,7 +110,7 @@ void goSleep() {
     if (status == -1 or
         dmesgErrors.find("PM: Some devices failed to suspend") != std::string::npos) {
       log("Failed to suspend, dmesg errors:\n" + dmesgErrors);
-      log("status: " + to_string(status));
+      log("\nstatus: " + to_string(status));
       CEG();
       count = count + 1;
       if (count == 5) {

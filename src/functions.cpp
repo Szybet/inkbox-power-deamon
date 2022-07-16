@@ -120,7 +120,9 @@ void writeFileString(string path, string stringToWrite) {
   fstream File;
   File.open(path, ios::out);
   if (!File) {
-    log("File not created");
+    string message = "File could not be created at path: ";
+    message.append(path);
+    log(message);
     exit(EXIT_FAILURE);
   } else {
     File << stringToWrite;
@@ -132,7 +134,9 @@ void writeFileString(string path, string stringToWrite) {
 string readFile(string path) {
   ifstream input_file(path);
   if (!input_file.is_open()) {
-    log("Could not open file");
+    string message = "Could not open file: ";
+    message.append(path);
+    log(message);
     exit(EXIT_FAILURE);
   }
   return string((std::istreambuf_iterator<char>(input_file)),

@@ -1,0 +1,19 @@
+#!/sbin/openrc-run
+
+description="Launches Power Daemon"
+
+depend() {
+        keyword -prefix -lxc
+}
+
+start() {
+        ebegin "Launching power daemon"
+        /usr/local/bin/powerDaemon &
+        eend $?
+}
+
+stop() {
+        ebegin "Stopping power daemon"
+        killall -9 powerDaemon
+        eend $?
+}

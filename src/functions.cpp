@@ -1,12 +1,16 @@
 #include <chrono>
 #include <cstdio>
 #include <cstdlib>
+#include <experimental/filesystem>
 #include <fstream>
 #include <iostream>
 #include <memory>
 #include <mutex>
+#include <ostream>
 #include <stdexcept>
 #include <string>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <thread>
 #include <vector>
 
@@ -52,6 +56,11 @@ mutex sleep_mtx;
 void log(string to_log) {
   if (logEnabled == true) {
     std::cout << to_log << std::endl;
+
+    // I wonder if its better to not close it every time
+    ofstream logFile("/tmp/PowerDaemonLogs.txt", ios::app);
+    logFile << to_log << std::endl;
+    logFile.close();
   }
 }
 
@@ -74,6 +83,7 @@ void prepareVariables() {
   model = readConfigString("/opt/inkbox_device");
   log("Running on: " + model);
 
+  // Lockscreen
   string stringRead1 = readConfigString("/opt/config/12-lockscreen/config");
   if (stringRead1 == "true") {
     lockscreen = true;
@@ -82,23 +92,43 @@ void prepareVariables() {
   }
   log("lockscreen is: " + stringRead1);
 
-  // in the future set it through config file
-  CinematicBrightnessdelayMs = 50;
-
+  // Simply it, for fbink dump
   dump = {0};
 
-  string stringRead2 = readConfigString("/opt/config/12-lockscreen/config");
-  if(stringRead2 == "true")
-  {
+  // dark mode
+  string stringRead2 = readConfigString("/opt/config/10-dark_mode/config");
+  if (stringRead2 == "true") {
     darkmode = true;
   } else {
     darkmode = false;
   }
+
+  // Specific daemon configs:
+  // in the future set it through config file
+
+  // /data/config/20-sleep_daemon
+  string mainPath = "/data/config/20-sleep_daemon";
+  if (dirExists(mainPath) == false) {
+    experimental::filesystem::create_directory(mainPath);
+    // /data/config/20-sleep_daemon/appList.txt
+    writeFileString("/data/config/20-sleep_daemon/appList.txt",
+                    "inkbox-bin\noobe-inkbox-bin\nlockscreen-bin\ncalculator-"
+                    "bin\nqreversi-bin\n2048-bin\nscribble\nlightmaps");
+    log("Created /data/config/20-sleep_daemon/appList.txt directory and appList.txt in it");
+  }
+
+  // 1-CinematicBrightnessdelayMs
+  string cinematicPath =
+      "/data/config/20-sleep_daemon/1-CinematicBrightnessdelayMs";
+  if (fileExists(cinematicPath) == true) {
+    CinematicBrightnessdelayMs = stoi(readConfigString(cinematicPath));
+  } else {
+    writeFileString(cinematicPath, "50");
+    CinematicBrightnessdelayMs = 50;
+  }
 }
 
-void ManageConfig() {
-  // /data/config/20-sleep_daemon
-}
+void ManageConfig() {}
 
 string readConfigString(string path) {
   ifstream indata;
@@ -143,8 +173,18 @@ string readFile(string path) {
                 std::istreambuf_iterator<char>());
 }
 
-bool is_file_exist(string fileName)
-{
-    std::ifstream infile(fileName);
-    return infile.good();
+bool fileExists(string fileName) {
+  std::ifstream infile(fileName);
+  return infile.good();
+}
+
+bool dirExists(string path) {
+  struct stat info;
+
+  if (stat(path.c_str(), &info) != 0)
+    return false;
+  else if (info.st_mode & S_IFDIR)
+    return true;
+  else
+    return false;
 }

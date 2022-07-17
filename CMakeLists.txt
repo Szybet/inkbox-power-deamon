@@ -24,7 +24,8 @@ link_directories(${CMAKE_SOURCE_DIR}/lib/FBInk/Release/)
 
 add_executable(inkbox-power-deamon ${fileSrc})
 
-target_link_libraries(inkbox-power-deamon libevdev.so libfbink.so)
+# https://stackoverflow.com/questions/33149878/experimentalfilesystem-linker-error
+target_link_libraries(inkbox-power-deamon libevdev.so libfbink.so stdc++fs)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})

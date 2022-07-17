@@ -7,7 +7,8 @@
                 "/home/build/inkbox/kernel/toolchain/armv7l-linux-musleabihf-cross/lib/gcc/armv7l-linux-musleabihf/10.2.1/",
                 "/home/build/inkbox/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/c++/10.2.1/",
                 "/home/build/inkbox/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/c++/10.2.1/armv7l-linux-musleabihf/bits/",
-                "/home/build/inkbox/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/lib/"
+                "/home/build/inkbox/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/lib/",
+                "/home/build/inkbox/kernel/toolchain/armv7l-linux-musleabihf-cross/armv7l-linux-musleabihf/include/c++/10.2.1/experimental"
             ],
             "defines": [],
             "compilerPath": "/home/build/inkbox/kernel/toolchain/armv7l-linux-musleabihf-cross/bin/armv7l-linux-musleabihf-gcc",

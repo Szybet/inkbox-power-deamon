@@ -36,3 +36,6 @@ sshpass -p $passwd ssh $servername "bash -c \"sync\""
 #sshpass -p $passwd ssh $servername "bash -c \"rm /kobo/inkbox-power-deamon\""
 #sshpass -p $passwd ssh $servername "bash -c \"mv /inkbox-power-deamon /kobo/\""
 #shpass -p $passwd ssh $servername "chroot /kobo sh -c \"DEBUG=true /inkbox-power-deamon\""
+
+# Reconnect to wifi
+# /usr/local/bin/wifi/connect_to_network.sh hotspot 12345678

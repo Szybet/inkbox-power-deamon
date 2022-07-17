@@ -21,7 +21,9 @@ void writeFileString(string path, string stringToWrite);
 
 string readFile(string path);
 
-bool is_file_exist(string fileName);
+bool fileExists(string fileName);
+
+bool dirExists(string path);
 
 enum goSleepCondition
 {

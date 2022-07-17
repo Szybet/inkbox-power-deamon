@@ -15,6 +15,8 @@ using namespace std;
 
 int main()
 {
+    std::cout << "Starting..." << std::endl;
+    
     const char* tmp = std:: getenv("DEBUG");
     std::string envVar;
 
@@ -25,8 +27,10 @@ int main()
         {
             logEnabled = true;
             log("Debug mode is activated");
+            log("Saving logs to /tmp/PowerDaemonLogs.txt");
         }
     }
+
 
     prepareVariables();
     ManageConfig();

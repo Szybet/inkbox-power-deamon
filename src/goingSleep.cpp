@@ -95,7 +95,7 @@ void goSleep() {
                  boost::token_compress_on);
 
     // to show whole dmesg
-    //log("dmesg: " + (string)logs_data);
+    // log("dmesg: " + (string)logs_data);
 
     free(logs_data);
     string dmesgErrors;
@@ -108,7 +108,8 @@ void goSleep() {
     }
     dmesgErrorsVec.clear();
     if (status == -1 or
-        dmesgErrors.find("PM: Some devices failed to suspend") != std::string::npos) {
+        dmesgErrors.find("PM: Some devices failed to suspend") !=
+            std::string::npos) {
       log("Failed to suspend, dmesg errors:\n" + dmesgErrors);
       log("\nstatus: " + to_string(status));
       CEG();

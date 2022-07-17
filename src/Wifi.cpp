@@ -49,7 +49,7 @@ void turnOffWifi() {
   }
 
   string wifiDevPath = "/sys/class/net/" + WIFI_DEV + "/operstate";
-  if (is_file_exist(wifiDevPath) == true) {
+  if (fileExists(wifiDevPath) == true) {
     if (readConfigString("/sys/class/net/" + WIFI_DEV + "/operstate") == "up") {
       writeFileString("/run/was_connected_to_wifi", "true");
 
@@ -106,7 +106,7 @@ void turnOnWifi() {
     SDIO_WIFI_PWR_MODULE = "/modules/sdio_wifi_pwr.ko";
     WIFI_DEV = "eth0";
   }
-  if (is_file_exist("/run/was_connected_to_wifi") == true) {
+  if (fileExists("/run/was_connected_to_wifi") == true) {
     if (readConfigString("/run/was_connected_to_wifi") == "true") {
       load_module(WIFI_MODULE);
       std::this_thread::sleep_for(std::chrono::milliseconds(300));
@@ -122,9 +122,9 @@ void turnOnWifi() {
       }
     }
 
-    if (is_file_exist("/data/config/17-wifi_connection_information/essid") ==
+    if (fileExists("/data/config/17-wifi_connection_information/essid") ==
             true and
-        is_file_exist(
+        fileExists(
             "/data/config/17-wifi_connection_information/passphrase") == true) {
       string ESSID =
           readConfigString("/data/config/17-wifi_connection_information/essid");

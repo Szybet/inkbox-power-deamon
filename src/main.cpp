@@ -7,6 +7,7 @@
 #include "watchdog.h"
 #include "fbinkFunctions.h"
 #include "AppsFreeze.h"
+#include "configUpdate.h"
 
 extern bool logEnabled;
 extern int fbfd;
@@ -33,14 +34,16 @@ int main()
 
 
     prepareVariables();
-    ManageConfig();
     initFbink();
 
     thread monitorDev(startMonitoringDev);
-    // https://stackoverflow.com/questions/7381757/c-terminate-called-without-an-active-exception
     thread watchdogThread(startWatchdog);
+    thread watchConfig(startMonitoringConfig);
 
+    // https://stackoverflow.com/questions/7381757/c-terminate-called-without-an-active-exception
     monitorDev.join();
     watchdogThread.join();
+    watchConfig.join();
+    log("How did this ended");
     return 0;
 }

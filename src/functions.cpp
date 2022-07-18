@@ -128,8 +128,6 @@ void prepareVariables() {
   }
 }
 
-void ManageConfig() {}
-
 string readConfigString(string path) {
   ifstream indata;
   string returnData;

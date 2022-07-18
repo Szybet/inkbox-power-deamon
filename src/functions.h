@@ -13,8 +13,6 @@ void waitMutex(mutex* exampleMutex);
 
 void prepareVariables();
 
-void ManageConfig();
-
 string readConfigString(string path);
 
 void writeFileString(string path, string stringToWrite);

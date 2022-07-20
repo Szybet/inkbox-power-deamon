@@ -9,4 +9,8 @@ void goSleep();
 
 void smartWait(int timeToWait);
 
+void startPipeServer();
+
+void sleepPipeSend();
+
 #endif

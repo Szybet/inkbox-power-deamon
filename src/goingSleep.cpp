@@ -3,6 +3,7 @@
 #include <boost/asio.hpp>
 #include <cerrno>
 #include <exception>
+#include <experimental/filesystem>
 #include <fcntl.h>
 #include <iostream>
 #include <mtd/mtd-user.h>
@@ -14,6 +15,9 @@
 #include <sys/klog.h>
 #include <thread>
 #include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
 
 #include "fbinkFunctions.h"
 #include "functions.h"
@@ -143,4 +147,40 @@ void smartWait(int timeToWait) {
     CEG();
     std::this_thread::sleep_for(std::chrono::milliseconds(time));
   }
+}
+
+void startPipeServer() {
+  log("Starting pipe server");
+
+  if (dirExists("/run/ipd") == false) {
+    log("Creating /run/ipd");
+    experimental::filesystem::create_directory("/run/ipd");
+    experimental::filesystem::create_directory("/kobo/run/ipd");
+    // Creating the named file(FIFO)
+    // mkfifo(<pathname>, <permission>)
+    char * myfifo = "/run/ipd/fifo";
+    mkfifo(myfifo, 0666);
+
+    system("/bin/mount --bind /run/ipd /kobo/run/ipd");
+  } else if (dirExists("/kobo/run/ipd") == false)
+  {
+    log("Creating /kobo/run/ipd ( this is weird )");
+    experimental::filesystem::create_directory("/kobo/run/ipd");
+    system("/bin/mount --bind /run/ipd /kobo/run/ipd");
+  }
+  
+}
+
+void sleepPipeSend() {
+  log("sending message");
+
+  char * myfifo = "/run/ipd/fifo";
+  int fd = open(myfifo, O_WRONLY);
+
+  string testString = "start";
+
+  write(fd, testString.c_str(), 5);
+
+  close(fd);
+
 }

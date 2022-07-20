@@ -8,6 +8,7 @@
 #include "fbinkFunctions.h"
 #include "AppsFreeze.h"
 #include "configUpdate.h"
+#include "goingSleep.h"
 
 extern bool logEnabled;
 extern int fbfd;
@@ -35,6 +36,11 @@ int main()
 
     prepareVariables();
     initFbink();
+
+    startPipeServer();
+    sleepPipeSend();
+    exit(0);
+
 
     thread monitorDev(startMonitoringDev);
     thread watchdogThread(startWatchdog);

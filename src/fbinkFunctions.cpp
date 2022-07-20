@@ -14,6 +14,8 @@ extern int fbfd;
 
 extern FBInkDump dump;
 
+extern string model;
+
 void initFbink() {
   fbfd = fbink_open();
   if (fbfd == -1) {
@@ -29,11 +31,17 @@ void initFbink() {
   */
 }
 
-int fbinkWriteCenter(string stringToWrite) {
+int fbinkWriteCenter(string stringToWrite, bool darkmode) {
 
   FBInkConfig fbink_cfg = {0};
   fbink_cfg.is_centered = true;
   fbink_cfg.is_halfway = true;
+  if (darkmode == true) {
+    // doesnt work?
+    //fbink_cfg.bg_color = BG_BLACK;
+    //fbink_cfg.fg_color = FG_WHITE;
+    fbink_cfg.is_inverted = true;
+  }
 
   if (fbink_init(fbfd, &fbink_cfg) < 0) {
     log("Failed to initialize FBInk, aborting");
@@ -60,7 +68,7 @@ int fbinkWriteCenter(string stringToWrite) {
 
 void clearScreen(bool darkmodeset) {
   FBInkConfig fbink_cfg = {0};
-  fbink_cfg.is_nightmode = darkmodeset;
+  fbink_cfg.is_inverted = darkmodeset;
 
   if (fbink_init(fbfd, &fbink_cfg) < 0) {
     log("Failed to initialize FBInk, aborting");
@@ -103,18 +111,36 @@ void screenshotFbink() {
   log("screenshot done");
 }
 
-void restoreFbink() {
+void restoreFbink(bool darkmode) {
   FBInkConfig fbink_cfg = {0};
+  if (darkmode == true) {
+    // doesnt work
+    //fbink_cfg.is_inverted = true;
+    fbink_cfg.is_nightmode = true;
+  }
 
   if (fbink_init(fbfd, &fbink_cfg) < 0) {
     log("Failed to initialize FBInk, aborting");
   }
 
   fbink_restore(fbfd, &fbink_cfg, &dump);
-  //free(dump.data);
+  // free(dump.data);
 }
 
-void closeFbink()
-{
-  fbink_close(fbfd);
+void closeFbink() { fbink_close(fbfd); }
+
+void restoreFbDepth() {
+  // fbdepth.c is a pretty complicated file so
+  if (model == "n437" or model == "kt") {
+    if (fileExists("/kobo/tmp/inkbox_running") == true) {
+      system("/opt/bin/fbink/fbdepth -d 8");
+    } else {
+      // X11 is running, elsewise there is something wrong ...
+      if (model == "kt") {
+        system("/opt/bin/fbink/fbdepth -d 32");
+      } else {
+        system("/opt/bin/fbink/fbdepth -d 16");
+      }
+    }
+  }
 }

@@ -5,6 +5,7 @@
 #include "fbink.h"
 #include "AppsFreeze.h"
 #include "Wifi.h"
+#include "pipeHandler.h"
 
 #include <exception>
 #include <mutex>
@@ -18,6 +19,8 @@ extern FBInkDump dump;
 
 extern sleepBool watchdogNextStep;
 
+extern bool darkmode;
+
 // Explanation why this code looks garbage
 // threads in cpp cant be killed from outside, so its needed to check every step
 // for a variable change. -Use another library! no. thats such a simple program
@@ -30,7 +33,7 @@ void CEP() {
   waitMutex(&sleep_mtx);
   if (sleepJob != Prepare) {
     sleep_mtx.unlock();
-    log("Terminating prepareSleep");
+    log("log: Terminating prepareSleep");
     terminate();
   }
   sleep_mtx.unlock();
@@ -42,20 +45,29 @@ void prepareSleep() {
   screenshotFbink();
   std::this_thread::sleep_for(std::chrono::milliseconds(300));
   CEP();
-  clearScreen(false);
+  sleepPipeSend();
+  CEP();
+  // for every app to go to sleep
+  std::this_thread::sleep_for(std::chrono::milliseconds(500));
+  CEP();
+  freezeApps();
+  CEP();
+  clearScreen(darkmode);
   sleepScreen();
   CEP();
   writeFileString("/tmp/sleep_standby", "true");
   writeFileString("/tmp/sleep_mode", "true");
-  freezeApps();
+
+
   CEP();
   saveBrightness(getBrightness());
   setBrightnessCin(0, getBrightness());
   CEP();
-  // actually we should check if modules of wifi are actually loaded before this
   turnOffWifi();
   CEP();
   writeFileString("/kobo/inkbox/remount", "false");
+  
+  system("/sbin/hwclock --systohc -u"); // why not?
   watchdogNextStep = GoingSleep;
   log("Exiting prepareSleep");
 }
@@ -64,7 +76,7 @@ void prepareSleep() {
 // writing Sleeping anyway with background
 void sleepScreen() {
   //printImage("/image.jpg");
-  fbinkWriteCenter("Sleeping");
+  fbinkWriteCenter("Sleeping", darkmode);
 }
 
 // first send a message to a fifo pipe for qt sleeping next read app list from

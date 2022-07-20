@@ -49,35 +49,49 @@ void startWatchdog() {
         sleepJob = Prepare;
         sleep_mtx.unlock();
         prepareThread = thread(prepareSleep);
+        prepareThread.detach();
+
+        //
       } else if (sleepJob == Prepare) {
         sleepJob = After;
         sleep_mtx.unlock();
-
-        if (prepareThread.joinable() == true)
+        if (prepareThread.joinable() == true) {
           prepareThread.join();
-
+        }
         afterThread = thread(afterSleep);
+        afterThread.detach();
+
+        //
       } else if (sleepJob == After) {
         sleepJob = Prepare;
         sleep_mtx.unlock();
 
-        if (prepareThread.joinable() == true)
+        if (prepareThread.joinable() == true) {
           prepareThread.join();
-        if (goingThread.joinable() == true)
+        }
+        if (goingThread.joinable() == true) {
           goingThread.join();
+        }
 
         prepareThread = thread(prepareSleep);
+        prepareThread.detach();
+
+        //
       } else if (sleepJob == GoingSleep) {
         log("Watchdog goes next with Goingsleep");
         sleepJob = After;
         sleep_mtx.unlock();
 
         log("trying to join goingThread");
-        if (goingThread.joinable() == true)
+        if (goingThread.joinable() == true) {
           goingThread.join();
+        }
 
         log("Launching afterSleep thread from GoingSleep watchdog state");
         afterThread = thread(afterSleep);
+        afterThread.detach();
+
+        //
       }
     }
     if (watchdogNextStep != Nothing) {
@@ -98,23 +112,28 @@ void startWatchdog() {
       }
       */
       // but it doesnt work, some weird error so...
-      if (prepareThread.joinable() == true)
+      if (prepareThread.joinable() == true) {
         prepareThread.join();
-      if (afterThread.joinable() == true)
+      }
+      if (afterThread.joinable() == true) {
         afterThread.join();
-      if (goingThread.joinable() == true)
+      }
+      if (goingThread.joinable() == true) {
         goingThread.join();
+      }
 
       if (watchdogNextStep == After) {
         waitMutex(&sleep_mtx);
         sleepJob = After;
         sleep_mtx.unlock();
         afterThread = thread(afterSleep);
+        afterThread.detach();
       } else if (watchdogNextStep == GoingSleep) {
         waitMutex(&sleep_mtx);
         sleepJob = GoingSleep;
         sleep_mtx.unlock();
         goingThread = thread(goSleep);
+        goingThread.detach();
       } else {
         log("Its impossible. you will never see this log");
         exit(EXIT_FAILURE);
@@ -126,4 +145,5 @@ void startWatchdog() {
 
   prepareThread.join();
   afterThread.join();
+  goingThread.join();
 }

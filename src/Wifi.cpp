@@ -53,16 +53,18 @@ void turnOffWifi() {
     if (readConfigString("/sys/class/net/" + WIFI_DEV + "/operstate") == "up") {
       writeFileString("/run/was_connected_to_wifi", "true");
 
+      system("killall -9 connect_to_network.sh"); // to be sure?
+      killProcess("connect_to_network.sh");
       killProcess("dhcpcd");
       killProcess("wpa_supplicant");
       killProcess("udhcpc");
 
-      string turnOffInterface = "/sbin/ifconfig " + WIFI_DEV + " down";
-      system(turnOffInterface.c_str());
-
       if (model == "n705" or model == "n905b" or model == "n905c" or
           model == "n613" or model == "n437") {
-        system("wlarm_le down");
+        system("/bin/wlarm_le down");
+      } else {
+        string turnOffInterface = "/sbin/ifconfig " + WIFI_DEV + " down";
+        system(turnOffInterface.c_str());
       }
     } else {
       log("Wifi is already off, but modules aren't unloaded");
@@ -74,10 +76,6 @@ void turnOffWifi() {
     if (delete_module(SDIO_WIFI_PWR_MODULE.c_str(), O_NONBLOCK) != 0) {
       log("Cant unload module: " + SDIO_WIFI_PWR_MODULE);
     }
-      // sleeping has problems with wifi, so wait additional time only when it
-      // is
-      system("/bin/sync");
-      // std::this_thread::sleep_for(std::chrono::milliseconds(15000));
   } else {
     log("Wifi is already off?");
   }
@@ -124,14 +122,14 @@ void turnOnWifi() {
 
     if (fileExists("/data/config/17-wifi_connection_information/essid") ==
             true and
-        fileExists(
-            "/data/config/17-wifi_connection_information/passphrase") == true) {
+        fileExists("/data/config/17-wifi_connection_information/passphrase") ==
+            true) {
       string ESSID =
           readConfigString("/data/config/17-wifi_connection_information/essid");
       string PASSPHRASE = readConfigString(
           "/data/config/17-wifi_connection_information/passphrase");
       string recconection = "/usr/local/bin/wifi/connect_to_network.sh " +
-                            ESSID + " " + PASSPHRASE;
+                            ESSID + " " + PASSPHRASE + " &";
       system(recconection.c_str());
     }
     remove("/run/was_connected_to_wifi");

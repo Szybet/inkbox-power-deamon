@@ -9,6 +9,7 @@
 #include "AppsFreeze.h"
 #include "configUpdate.h"
 #include "goingSleep.h"
+#include "pipeHandler.h"
 
 extern bool logEnabled;
 extern int fbfd;
@@ -36,10 +37,7 @@ int main()
 
     prepareVariables();
     initFbink();
-
     startPipeServer();
-    sleepPipeSend();
-    exit(0);
 
 
     thread monitorDev(startMonitoringDev);
@@ -51,5 +49,5 @@ int main()
     watchdogThread.join();
     watchConfig.join();
     log("How did this ended");
-    return 0;
+    return -1;
 }

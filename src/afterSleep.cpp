@@ -4,6 +4,7 @@
 #include "cinematicBrightness.h"
 #include "fbinkFunctions.h"
 #include "functions.h"
+#include "pipeHandler.h"
 
 #include <exception>
 #include <fcntl.h>
@@ -36,7 +37,7 @@ void CEA() {
   waitMutex(&sleep_mtx);
   if (sleepJob != After) {
     sleep_mtx.unlock();
-    log("Terminating afterSleep");
+    log("log: Terminating afterSleep");
     terminate();
   }
   sleep_mtx.unlock();
@@ -54,6 +55,11 @@ void afterSleep() {
 
   //initFbink();
 
+  restoreFbDepth();
+  CEA();
+  system("/sbin/hwclock --hctosys -u");
+  CEA();
+
   if (darkmode == true) {
     clearScreen(true);
   } else {
@@ -65,10 +71,14 @@ void afterSleep() {
   // how do i manage the lockscreen? the apps are freezen now
   // Don't
 
-  restoreFbink();
-  std::this_thread::sleep_for(std::chrono::milliseconds(300));
   CEA();
   unfreezeApps();
+  std::this_thread::sleep_for(std::chrono::milliseconds(300));
+  CEA();
+  restorePipeSend();
+  std::this_thread::sleep_for(std::chrono::milliseconds(300));
+  CEA();
+  restoreFbink(darkmode);
   CEA();
   setBrightnessCin(restoreBrightness(), 0);
   remove("/tmp/savedBrightness");

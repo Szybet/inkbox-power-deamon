@@ -35,9 +35,10 @@ FBInkDump dump;
 
 vector<int> AppsPids;
 
-bool darkmode;
 // im not sure if this one doesnt need a mutex. will leave it for now
 sleepBool watchdogNextStep = Nothing;
+
+bool darkmode;
 
 // Mutex variables
 
@@ -50,11 +51,15 @@ mutex newSleepCondition_mtx;
 sleepBool sleepJob = Nothing;
 mutex sleep_mtx;
 
-sleepBool CurrentActiveThread;
-mutex CurrentActiveThread_mtx;
+// those mutexes is to check if a thread wants to exit, to call .join before it
+bool exitPreparethread = false;
+mutex exitPreparethread_mtx;
 
+bool exitGoingThread = false;
+mutex exitGoingThread_mtx;
 
-// 
+bool exitAfterThread = false;
+mutex exitAfterThread_mtx;
 //
 
 void log(string to_log) {

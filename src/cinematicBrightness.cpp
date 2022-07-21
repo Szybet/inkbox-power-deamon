@@ -40,7 +40,13 @@ void saveBrightness(int level) {
 }
 
 int restoreBrightness() {
-  return stoi(readConfigString("/tmp/savedBrightness"));
+  if (fileExists("/tmp/savedBrightness") == true) {
+    return stoi(readConfigString("/tmp/savedBrightness"));
+  } else {
+    log("/tmp/savedBrightness doesnt exist. propably becouse of spamming the "
+        "power button like crazy. returning current brightness");
+    return getBrightness();
+  }
 }
 
 void setBrightness(int device, int level) { ioctl(device, 241, level); }

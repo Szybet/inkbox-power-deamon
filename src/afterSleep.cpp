@@ -6,6 +6,7 @@
 #include "functions.h"
 #include "pipeHandler.h"
 
+#include <chrono>
 #include <exception>
 #include <fcntl.h>
 #include <iostream>
@@ -16,7 +17,6 @@
 #include <sys/ioctl.h>
 #include <thread>
 #include <unistd.h>
-#include <chrono>
 
 extern sleepBool sleepJob;
 extern mutex sleep_mtx;
@@ -24,6 +24,12 @@ extern mutex sleep_mtx;
 extern FBInkDump dump;
 
 extern bool darkmode;
+
+extern sleepBool CurrentActiveThread;
+extern mutex CurrentActiveThread_mtx;
+
+// there is no way to stop the threat... so i will use this bool
+bool dieAfter;
 
 // Explanation why this code looks garbage
 // threads in cpp cant be killed from outside, so its needed to check every step
@@ -34,62 +40,74 @@ extern bool darkmode;
 
 // void checkExitAfter()
 void CEA() {
-  waitMutex(&sleep_mtx);
-  if (sleepJob != After) {
+  if (dieAfter == false) {
+    waitMutex(&sleep_mtx);
+    if (sleepJob != After) {
+      sleep_mtx.unlock();
+      log("log: Terminating afterSleep");
+      dieAfter = true;
+    }
     sleep_mtx.unlock();
-    log("log: Terminating afterSleep");
-    terminate();
   }
-  sleep_mtx.unlock();
 }
 
 void afterSleep() {
   log("Launching afterSleep");
+  dieAfter = false;
+  
   // very important.
   int fd = open("/sys/power/state-extended", O_RDWR);
   write(fd, "0", 1);
   close(fd);
 
   CEA();
-  writeFileString("/tmp/sleep_mode", "false");
-
-  //initFbink();
-
-  restoreFbDepth();
-  CEA();
-  system("/sbin/hwclock --hctosys -u");
-  CEA();
-
-  if (darkmode == true) {
-    clearScreen(true);
-  } else {
-    clearScreen(false);
+  if (dieAfter == false) {
+    writeFileString("/tmp/sleep_mode", "false");
+    // initFbink();
+    restoreFbDepth();
   }
 
   CEA();
+  if (dieAfter == false) {
+    system("/sbin/hwclock --hctosys -u");
+    clearScreen(darkmode);
+  }
 
   // how do i manage the lockscreen? the apps are freezen now
   // Don't
 
   CEA();
-  unfreezeApps();
-  std::this_thread::sleep_for(std::chrono::milliseconds(300));
-  CEA();
-  restorePipeSend();
-  std::this_thread::sleep_for(std::chrono::milliseconds(300));
-  CEA();
-  restoreFbink(darkmode);
-  CEA();
-  setBrightnessCin(restoreBrightness(), 0);
-  remove("/tmp/savedBrightness");
+  if (dieAfter == false) {
+    unfreezeApps();
+    std::this_thread::sleep_for(std::chrono::milliseconds(300));
+    restorePipeSend();
+    std::this_thread::sleep_for(std::chrono::milliseconds(300));
+  }
 
   CEA();
-  // the longest step, propably
-  turnOnWifi();
-  CEA();
+  if (dieAfter == false) {
+    restoreFbink(darkmode);
+  }
 
-  waitMutex(&sleep_mtx);
-  sleepJob = Nothing;
-  sleep_mtx.unlock();
+  CEA();
+  if (dieAfter == false) {
+    setBrightnessCin(restoreBrightness(), 0);
+    remove("/tmp/savedBrightness");
+  }
+
+  CEA();
+  if (dieAfter == false) {
+    turnOnWifi();
+  }
+
+  CEA();
+  if (dieAfter == false) {
+    waitMutex(&sleep_mtx);
+    sleepJob = Nothing;
+    sleep_mtx.unlock();
+  }
+  waitMutex(&CurrentActiveThread_mtx);
+  CurrentActiveThread = Nothing;
+  CurrentActiveThread_mtx.unlock();
   log("Exiting afterSleep");
 }

@@ -1,53 +1,52 @@
 #include <iostream>
+#include <pthread.h>
 #include <string>
 #include <thread>
 
-#include "monitorEvents.h"
-#include "functions.h"
-#include "watchdog.h"
-#include "fbinkFunctions.h"
 #include "AppsFreeze.h"
 #include "configUpdate.h"
+#include "fbinkFunctions.h"
+#include "functions.h"
 #include "goingSleep.h"
+#include "monitorEvents.h"
 #include "pipeHandler.h"
+#include "watchdog.h"
 
 extern bool logEnabled;
 extern int fbfd;
 
 using namespace std;
 
-int main()
-{
-    std::cout << "Starting..." << std::endl;
-    
-    const char* tmp = std:: getenv("DEBUG");
-    std::string envVar;
+int main() {
+  static_cast<void>(pthread_create);
+  static_cast<void>(pthread_cancel);
 
-    if(tmp != NULL)
-    {
-        envVar = tmp;
-        if(envVar == "true")
-        {
-            logEnabled = true;
-            log("Debug mode is activated");
-            log("Saving logs to /tmp/PowerDaemonLogs.txt");
-        }
+  std::cout << "Starting..." << std::endl;
+
+  const char *tmp = std::getenv("DEBUG");
+  std::string envVar;
+
+  if (tmp != NULL) {
+    envVar = tmp;
+    if (envVar == "true") {
+      logEnabled = true;
+      log("Debug mode is activated");
+      log("Saving logs to /tmp/PowerDaemonLogs.txt");
     }
+  }
 
+  prepareVariables();
+  initFbink();
+  startPipeServer();
 
-    prepareVariables();
-    initFbink();
-    startPipeServer();
+  thread monitorDev(startMonitoringDev);
+  thread watchdogThread(startWatchdog);
+  thread watchConfig(startMonitoringConfig);
 
-
-    thread monitorDev(startMonitoringDev);
-    thread watchdogThread(startWatchdog);
-    thread watchConfig(startMonitoringConfig);
-
-    // https://stackoverflow.com/questions/7381757/c-terminate-called-without-an-active-exception
-    monitorDev.join();
-    watchdogThread.join();
-    watchConfig.join();
-    log("How did this ended");
-    return -1;
+  // https://stackoverflow.com/questions/7381757/c-terminate-called-without-an-active-exception
+  monitorDev.join();
+  watchdogThread.join();
+  watchConfig.join();
+  log("How did this ended");
+  return -1;
 }

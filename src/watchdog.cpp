@@ -21,6 +21,22 @@ extern mutex sleep_mtx;
 
 extern sleepBool watchdogNextStep;
 
+// this variable says what thread is currently active, to know which to kill
+extern sleepBool CurrentActiveThread;
+extern mutex CurrentActiveThread_mtx;
+
+// I wanted to write a function for all those joins:
+/*
+void join_smarter(thread threadArg)
+{
+  if(threadArg.joinable() == true)
+  {
+    threadArg.join();
+  }
+}
+*/
+// but it doesnt work, some weird error so...
+
 void startWatchdog() {
   std::chrono::milliseconds timespan(150);
 
@@ -46,52 +62,124 @@ void startWatchdog() {
       waitMutex(&sleep_mtx);
 
       if (sleepJob == Nothing) {
+        log("Launching prepare thread becouse of nothing sleep job");
+        // This is here to avoid waiting too long after
+        waitMutex(&CurrentActiveThread_mtx);
         sleepJob = Prepare;
         sleep_mtx.unlock();
+
+        if (CurrentActiveThread != Nothing) {
+          bool check = false;
+          CurrentActiveThread_mtx.unlock();
+          while (check == false) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            waitMutex(&CurrentActiveThread_mtx);
+            if (CurrentActiveThread == Nothing) {
+              check = true;
+            }
+            CurrentActiveThread_mtx.unlock();
+          }
+        } else {
+          CurrentActiveThread_mtx.unlock();
+        }
+
+        waitMutex(&CurrentActiveThread_mtx);
+        CurrentActiveThread = Prepare;
+        CurrentActiveThread_mtx.unlock();
         prepareThread = thread(prepareSleep);
         prepareThread.detach();
 
         //
       } else if (sleepJob == Prepare) {
+        log("Launching after thread becouse of prepare sleep job");
+        waitMutex(&CurrentActiveThread_mtx);
         sleepJob = After;
         sleep_mtx.unlock();
-        if (prepareThread.joinable() == true) {
-          prepareThread.join();
+
+        if (CurrentActiveThread != Nothing) {
+          bool check = false;
+          CurrentActiveThread_mtx.unlock();
+          while (check == false) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            waitMutex(&CurrentActiveThread_mtx);
+            if (CurrentActiveThread == Nothing) {
+              check = true;
+            }
+            CurrentActiveThread_mtx.unlock();
+          }
+        } else {
+          CurrentActiveThread_mtx.unlock();
         }
+
+        waitMutex(&CurrentActiveThread_mtx);
+        CurrentActiveThread = After;
+        CurrentActiveThread_mtx.unlock();
+
         afterThread = thread(afterSleep);
         afterThread.detach();
 
         //
       } else if (sleepJob == After) {
+        log("Launching prepare thread becouse of after sleep job");
+        waitMutex(&CurrentActiveThread_mtx);
         sleepJob = Prepare;
         sleep_mtx.unlock();
 
-        if (prepareThread.joinable() == true) {
-          prepareThread.join();
+        if (CurrentActiveThread != Nothing) {
+          bool check = false;
+          CurrentActiveThread_mtx.unlock();
+          while (check == false) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            waitMutex(&CurrentActiveThread_mtx);
+            if (CurrentActiveThread == Nothing) {
+              check = true;
+            }
+            CurrentActiveThread_mtx.unlock();
+          }
+        } else {
+          CurrentActiveThread_mtx.unlock();
         }
-        if (goingThread.joinable() == true) {
-          goingThread.join();
-        }
+
+        waitMutex(&CurrentActiveThread_mtx);
+        CurrentActiveThread = Prepare;
+        CurrentActiveThread_mtx.unlock();
 
         prepareThread = thread(prepareSleep);
         prepareThread.detach();
 
         //
       } else if (sleepJob == GoingSleep) {
-        log("Watchdog goes next with Goingsleep");
+        log("Launching after thread becouse of goingsleep sleep job");
+        waitMutex(&CurrentActiveThread_mtx);
         sleepJob = After;
         sleep_mtx.unlock();
 
-        log("trying to join goingThread");
-        if (goingThread.joinable() == true) {
-          goingThread.join();
+        if (CurrentActiveThread != Nothing) {
+          bool check = false;
+          CurrentActiveThread_mtx.unlock();
+          while (check == false) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            waitMutex(&CurrentActiveThread_mtx);
+            if (CurrentActiveThread == Nothing) {
+              check = true;
+            }
+            CurrentActiveThread_mtx.unlock();
+          }
+        } else {
+          CurrentActiveThread_mtx.unlock();
         }
 
-        log("Launching afterSleep thread from GoingSleep watchdog state");
+        waitMutex(&CurrentActiveThread_mtx);
+        CurrentActiveThread = After;
+        CurrentActiveThread_mtx.unlock();
+
         afterThread = thread(afterSleep);
         afterThread.detach();
 
         //
+      } else {
+        log("This will never happen: watchdog");
+        sleep_mtx.unlock();
       }
     }
     if (watchdogNextStep != Nothing) {
@@ -101,37 +189,42 @@ void startWatchdog() {
       sleepJob = Nothing;
       sleep_mtx.unlock();
 
-      // I wanted to write a function for it:
-      /*
-      void join_smarter(thread threadArg)
-      {
-        if(threadArg.joinable() == true)
-        {
-          threadArg.join();
+      waitMutex(&CurrentActiveThread_mtx);
+      if (CurrentActiveThread != Nothing) {
+        bool check = false;
+        CurrentActiveThread_mtx.unlock();
+        while (check == false) {
+          std::this_thread::sleep_for(std::chrono::milliseconds(50));
+          waitMutex(&CurrentActiveThread_mtx);
+          if (CurrentActiveThread == Nothing) {
+            check = true;
+          }
+          CurrentActiveThread_mtx.unlock();
         }
-      }
-      */
-      // but it doesnt work, some weird error so...
-      if (prepareThread.joinable() == true) {
-        prepareThread.join();
-      }
-      if (afterThread.joinable() == true) {
-        afterThread.join();
-      }
-      if (goingThread.joinable() == true) {
-        goingThread.join();
+      } else {
+        CurrentActiveThread_mtx.unlock();
       }
 
       if (watchdogNextStep == After) {
         waitMutex(&sleep_mtx);
         sleepJob = After;
         sleep_mtx.unlock();
+
+        waitMutex(&CurrentActiveThread_mtx);
+        CurrentActiveThread = After;
+        CurrentActiveThread_mtx.unlock();
+
         afterThread = thread(afterSleep);
         afterThread.detach();
       } else if (watchdogNextStep == GoingSleep) {
         waitMutex(&sleep_mtx);
         sleepJob = GoingSleep;
         sleep_mtx.unlock();
+
+        waitMutex(&CurrentActiveThread_mtx);
+        CurrentActiveThread = GoingSleep;
+        CurrentActiveThread_mtx.unlock();
+
         goingThread = thread(goSleep);
         goingThread.detach();
       } else {
@@ -147,3 +240,32 @@ void startWatchdog() {
   afterThread.join();
   goingThread.join();
 }
+
+/*
+// some bad code:
+// to be sure, always to avoid crashes
+    if (prepareThread.joinable() == true) {
+      log("Fallback joining in watchdog: prepare thread");
+      //prepareThread.join();
+      //log("fallback joined: prepare thread");
+      //waitMutex(&CurrentActiveThread_mtx);
+      //CurrentActiveThread = Nothing;
+      //CurrentActiveThread_mtx.unlock();
+    }
+    if (goingThread.joinable() == true) {
+      log("Fallback joining in watchdog: going thread");
+      //goingThread.join();
+      //log("fallback joined: going thread");
+      //waitMutex(&CurrentActiveThread_mtx);
+      //CurrentActiveThread = Nothing;
+      //CurrentActiveThread_mtx.unlock();
+    }
+    if (afterThread.joinable() == true) {
+      log("Fallback joining in watchdog: after thread");
+      //afterThread.join();
+      //log("fallback joined: after thread");
+      //waitMutex(&CurrentActiveThread_mtx);
+      //CurrentActiveThread = Nothing;
+      CurrentActiveThread_mtx.unlock();
+    }
+*/

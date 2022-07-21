@@ -22,11 +22,13 @@
 extern sleepBool sleepJob;
 extern mutex sleep_mtx;
 
-extern sleepBool CurrentActiveThread;
-extern mutex CurrentActiveThread_mtx;
+extern int fbfd; // not sure if needed
 
-// there is no way to stop the threat... so i will use this bool
-bool dieGoing;
+extern bool exitGoingThread;
+extern mutex exitGoingThread_mtx;
+
+// test
+// extern sleepBool watchdogNextStep;
 
 // Some notes
 /*
@@ -44,39 +46,62 @@ a signal after being waked up, so watchdog knows what to do;
 
 // checkExitGoing
 void CEG() {
-  if (dieGoing == false) {
-    waitMutex(&sleep_mtx);
-    if (sleepJob != GoingSleep) {
-      sleep_mtx.unlock();
-      log("log: Terminating goSleep");
-      dieGoing = true;
+  waitMutex(&sleep_mtx);
+  if (sleepJob != GoingSleep) {
+    sleep_mtx.unlock();
+    waitMutex(&exitGoingThread_mtx);
+    if (exitGoingThread == true) {
+      // will never happen.
+      log("HOW, JUST HOW? this happened in aftersleep CEA");
+      exit(-1);
+    } else {
+      exitGoingThread = true;
+      exitGoingThread_mtx.unlock();
+      // wait until it can die. safely.
+      log("Entering loop for waiting to die: goingsleep");
+      while (true) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        waitMutex(&exitGoingThread_mtx);
+        if (exitGoingThread == false) {
+          exitGoingThread_mtx.unlock();
+          // just to be sureee
+          std::this_thread::sleep_for(std::chrono::milliseconds(40));
+          terminate();
+        } else {
+          exitGoingThread_mtx.unlock();
+        }
+      }
     }
+  } else {
     sleep_mtx.unlock();
   }
 }
 
 void goSleep() {
   log("Started goSleep");
-  dieGoing = false;
+  CEG();
+  // isint needed?
+  // closeFbink();
+  // CEG();
 
   system("/bin/sync");
 
-  CEG();
-  if (dieGoing == false) {
-    int fd = open("/sys/power/state-extended", O_RDWR);
-    write(fd, "1", 1);
-    close(fd);
-  }
-
-  smartWait(1000);
+  int fd = open("/sys/power/state-extended", O_RDWR);
+  write(fd, "1", 1);
+  close(fd);
 
   CEG();
+
+  std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+  CEG();
+
   log("Going to sleep now!");
-  smartWait(1000);
+  std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
   bool continueSleeping = true;
   int count = 0;
-  while (continueSleeping == true and dieGoing == false) {
+  while (continueSleeping == true) {
     // https://linux.die.net/man/3/klogctl
     klogctl(5, NULL, 0);
 
@@ -88,7 +113,7 @@ void goSleep() {
 
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
-    log("Got back from suspend");
+    log("After sleep");
 
     // get dmesg, and then only lines containing <3>
     char *logs_data;
@@ -116,7 +141,7 @@ void goSleep() {
         dmesgErrors.find("PM: Some devices failed to suspend") !=
             std::string::npos) {
       log("Failed to suspend, dmesg errors:\n" + dmesgErrors);
-      log("\nstatus of writing to /sys/power/state: " + to_string(status));
+      log("\nstatus: " + to_string(status));
       CEG();
       count = count + 1;
       if (count == 5) {
@@ -130,16 +155,14 @@ void goSleep() {
       }
     } else {
       // Exiting this sleeping hell
-      log("Sleeping finished. Tryied going to sleep " + to_string(count) +
-          "times");
+      log("Tryied going to sleep " + to_string(count) + "times");
       continueSleeping = false;
     }
   }
+  // test
+  // watchdogNextStep = After;
 
-  waitMutex(&CurrentActiveThread_mtx);
-  CurrentActiveThread = Nothing;
-  CurrentActiveThread_mtx.unlock();
-  log("Exiting going to sleep");
+  log("Sleep finished, Exiting going to sleep");
 }
 
 // Sometimes i regret using such a simple multi threading, but then i remember
@@ -147,7 +170,7 @@ void goSleep() {
 void smartWait(int timeToWait) {
   int time = timeToWait / 20;
   int count = 0;
-  while (count < 20 and dieGoing == false) {
+  while (count < 20) {
     count = count + 1;
     CEG();
     std::this_thread::sleep_for(std::chrono::milliseconds(time));

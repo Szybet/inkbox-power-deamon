@@ -60,7 +60,7 @@ void startMonitoringDev() {
           to_string(ev.value));
 
       if (codeName == "KEY_POWER" and ev.value == 1) {
-        log("Sending message to sleep");
+        log("MonitorEvents: Sending message to sleep");
 
         waitMutex(&watchdogStartJob_mtx);
         watchdogStartJob = true;

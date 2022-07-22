@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <experimental/filesystem>
+#include <fcntl.h>
 #include <fstream>
 #include <iostream>
 #include <memory>
@@ -12,6 +13,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <thread>
+#include <unistd.h>
 #include <vector>
 
 #include "fbink.h"
@@ -20,14 +22,11 @@
 using namespace std;
 
 // Variables ( that there is no risk that they will be readed at the same tame
-// by many threads )
+// by many threads ). Used by fbink, internal things
 
 bool logEnabled = false;
 
 string model;
-bool lockscreen;
-
-int CinematicBrightnessdelayMs;
 
 int fbfd;
 
@@ -35,7 +34,22 @@ FBInkDump dump;
 
 vector<int> AppsPids;
 
+bool wasUsbNetOn;
+
+// Config var
+
+int CinematicBrightnessdelayMs;
+
+bool lockscreen;
+
 bool darkmode;
+
+string cpuGovernorToSet;
+
+bool WhenChargerSleep;
+
+// Internal variables used by watchdog and threads
+
 // im not sure if this one doesnt need a mutex. will leave it for now
 sleepBool watchdogNextStep = Nothing;
 
@@ -53,8 +67,6 @@ mutex sleep_mtx;
 sleepBool CurrentActiveThread;
 mutex CurrentActiveThread_mtx;
 
-
-// 
 //
 
 void log(string to_log) {
@@ -109,6 +121,16 @@ void prepareVariables() {
     darkmode = false;
   }
 
+  // usb net
+  string commandOutput = executeCommand("service usbnet status");
+  if (commandOutput.find("status: started") != std::string::npos) {
+    log("Usb net is started");
+    wasUsbNetOn = true;
+  } else {
+    log("Usb net isin't started");
+    wasUsbNetOn = false;
+  }
+
   // Specific daemon configs:
   // in the future set it through config file
 
@@ -120,7 +142,8 @@ void prepareVariables() {
     writeFileString("/data/config/20-sleep_daemon/appList.txt",
                     "inkbox-bin\noobe-inkbox-bin\nlockscreen-bin\ncalculator-"
                     "bin\nqreversi-bin\n2048-bin\nscribble\nlightmaps\nexec");
-    log("Created /data/config/20-sleep_daemon/appList.txt directory and appList.txt in it");
+    log("Created /data/config/20-sleep_daemon/appList.txt directory and "
+        "appList.txt in it");
   }
 
   // 1-CinematicBrightnessdelayMs
@@ -131,6 +154,39 @@ void prepareVariables() {
   } else {
     writeFileString(cinematicPath, "50");
     CinematicBrightnessdelayMs = 50;
+  }
+
+  // 2-cpuGovernor
+  string cpuGovernorPath = "/data/config/20-sleep_daemon/2-cpuGovernor";
+  if (fileExists(cpuGovernorPath) == true) {
+    cpuGovernorToSet = readConfigString(cpuGovernorPath);
+    log("Setting cpu freq governor to " + cpuGovernorToSet);
+    int dev =
+        open("/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor", O_RDWR);
+    int writeStatus =
+        write(dev, cpuGovernorToSet.c_str(), cpuGovernorToSet.length());
+    close(dev);
+    log("Write status writing to scaling_governor is: " +
+        std::to_string(writeStatus));
+  } else {
+    writeFileString(cpuGovernorPath, "ondemand");
+    cpuGovernorToSet = "ondemand";
+  }
+
+  // 3-WhenChargerSleep
+  string WhenChargerSleepPath =
+      "/data/config/20-sleep_daemon/3-WhenChargerSleep";
+  if (fileExists(WhenChargerSleepPath) == true) {
+    string boolToConvert = readConfigString(WhenChargerSleepPath);
+    if (boolToConvert == "true") {
+      WhenChargerSleep = true;
+    } else {
+      WhenChargerSleep = false;
+    }
+  } else {
+    // Here it should depend on device
+    writeFileString(WhenChargerSleepPath, "true");
+    WhenChargerSleep = true;
   }
 }
 
@@ -191,4 +247,45 @@ bool dirExists(string path) {
     return true;
   else
     return false;
+}
+
+string executeCommand(string command) {
+  char buffer[128]; // must be enough
+  string result = "";
+
+  // Open pipe to file
+  FILE *pipe = popen(command.c_str(), "r");
+  if (!pipe) {
+    return "popen failed!";
+  }
+
+  // read till end of process:
+  while (!feof(pipe)) {
+
+    // use buffer to read and add to result
+    if (fgets(buffer, 128, pipe) != NULL)
+      result += buffer;
+  }
+
+  pclose(pipe);
+
+  log("Output of command: \" " + command + " \"" + "is: \" " + result + " \"");
+  return result;
+}
+
+bool getChargerStatus() {
+  string chargerStatus;
+  if(model == "kt")
+  {
+    chargerStatus = readConfigString("/sys/devices/system/yoshi_battery/yoshi_battery0/battery_status");
+  } else {
+    chargerStatus = readConfigString("/sys/devices/platform/pmic_battery.1/power_supply/mc13892_bat/status");
+    
+  }
+  if(chargerStatus == "Discharging")
+  {
+    return false;
+  } else {
+    return true;
+  }
 }

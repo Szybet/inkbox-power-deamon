@@ -5,6 +5,7 @@
 #include "fbinkFunctions.h"
 #include "functions.h"
 #include "pipeHandler.h"
+#include "usbnet.h"
 
 #include <chrono>
 #include <exception>
@@ -54,7 +55,7 @@ void CEA() {
 void afterSleep() {
   log("Launching afterSleep");
   dieAfter = false;
-  
+
   // very important.
   int fd = open("/sys/power/state-extended", O_RDWR);
   write(fd, "0", 1);
@@ -98,6 +99,11 @@ void afterSleep() {
   CEA();
   if (dieAfter == false) {
     turnOnWifi();
+  }
+
+  CEA();
+  if (dieAfter == false) {
+    startUsbNet();
   }
 
   CEA();

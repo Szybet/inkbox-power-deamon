@@ -6,6 +6,7 @@
 #include "fbinkFunctions.h"
 #include "functions.h"
 #include "pipeHandler.h"
+#include "usbnet.h"
 
 #include <exception>
 #include <mutex>
@@ -95,6 +96,11 @@ void prepareSleep() {
   if (diePrepare == false) {
     writeFileString("/kobo/inkbox/remount", "false");
     system("/sbin/hwclock --systohc -u"); // why not?
+  }
+
+  CEP();
+  if (diePrepare == false) {
+    disableUsbNet();
   }
 
   CEP();

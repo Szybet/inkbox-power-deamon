@@ -10,6 +10,11 @@
 
 using namespace std;
 
+// var
+
+extern bool WhenChargerSleep;
+
+//
 extern bool watchdogStartJob;
 extern mutex watchdogStartJob_mtx;
 
@@ -54,10 +59,17 @@ void startWatchdog() {
     // this here takes signals from monitorEvents and assigns them to do things
     if (saveWatchdogState == true) {
       log("Watchdog event received");
-      saveWatchdogState = false;
 
-      // Proritise user events over next steps
-      watchdogNextStep = Nothing;
+      // Handling 3-WhenChargerSleep
+      if (WhenChargerSleep == false) {
+        if (getChargerStatus() == true) {
+          log("Skipping watchdog event becouse of 3-WhenChargerSleep");
+          sleepJob = Skip;
+        }
+      }
+
+      // Proritise user events over next steps - actually no. maybe
+      //watchdogNextStep = Nothing;
 
       waitMutex(&sleep_mtx);
 

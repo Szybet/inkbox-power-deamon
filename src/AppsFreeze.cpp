@@ -69,7 +69,7 @@ void freezeApps() {
   for (string &app : BuiltInApps) {
     Pidvec.push_back(getPidByName(app));
   }
-  if (fileExists("/kobo/tmp/currentlyRunningUserApplication")) {
+  if (fileExists("/kobo/tmp/currentlyRunningUserApplication") == true) {
     Pidvec.push_back(stoi(getRunningUserApp()));
   }
 

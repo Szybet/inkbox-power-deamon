@@ -23,6 +23,10 @@ bool fileExists(string fileName);
 
 bool dirExists(string path);
 
+string executeCommand(string command);
+
+bool getChargerStatus();
+
 enum goSleepCondition
 {
     None,
@@ -36,6 +40,7 @@ enum sleepBool
     Prepare,
     GoingSleep,
     After,   
+    Skip,
 };
 
 #endif

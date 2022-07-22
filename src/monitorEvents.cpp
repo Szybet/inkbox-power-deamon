@@ -43,10 +43,9 @@ void startMonitoringDev() {
 
   log("Input device name: " + (string)libevdev_get_name(dev));
   log("Input device bus " + to_string(libevdev_get_id_bustype(dev)) +
-      " vendor: " + to_string(libevdev_get_id_vendor(dev)) + " product: " +
-      to_string(libevdev_get_id_product(dev)));
-  
-  
+      " vendor: " + to_string(libevdev_get_id_vendor(dev)) +
+      " product: " + to_string(libevdev_get_id_product(dev)));
+
   chrono::milliseconds timespan(150);
   chrono::milliseconds afterEventWait(1000);
   do {
@@ -70,7 +69,7 @@ void startMonitoringDev() {
         newSleepCondition = powerButton;
         newSleepCondition_mtx.unlock();
 
-        //this_thread::sleep_for(afterEventWait);
+        // this_thread::sleep_for(afterEventWait);
       }
     }
 

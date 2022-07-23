@@ -18,10 +18,11 @@
 #define EVENT_SIZE (sizeof(struct inotify_event))
 #define BUF_LEN (1024 * (EVENT_SIZE + 16))
 
+// this isin't the best implementation, and i dont understand some things
+
 void startMonitoringConfig() {
   log("Starting monitoring for config updates");
 
-  int length, i = 0;
   int fd;
   int wd;
   char buffer[BUF_LEN];
@@ -31,59 +32,58 @@ void startMonitoringConfig() {
     log("inotify_init failed (old kernel?)");
   }
 
-  wd = inotify_add_watch(fd, "/data/config/20-sleep_daemon", IN_MODIFY | IN_CREATE | IN_DELETE);
+  wd = inotify_add_watch(fd, "/data/config/20-sleep_daemon",
+                         IN_MODIFY | IN_CREATE | IN_DELETE);
 
-  length = read(fd, buffer, BUF_LEN);
+  while (true) {
+    int length, i = 0;
+    length = read(fd, buffer, BUF_LEN);
+    log("inotify readed up");
 
-  if (length < 0) {
-    log("failed to read from buffer");
-  }
-
-  log("inotify setted up");
-  /*
-  while ( i < length ) {
-      struct inotify_event *event = ( struct inotify_event * ) &buffer[ i ];
-      if(event->len) {
-          if ( event->mask & IN_MODIFY ) {
-              log("/tmp/power was modified");
-          }
-      }
-  }
-  */
-  while (i < length) {
-    struct inotify_event *event = (struct inotify_event *)&buffer[i];
-    if (event->len) {
-      if (event->mask & IN_CREATE) {
-        /*if ( event->mask & IN_ISDIR ) {
-          printf( "The directory %s was created.\n", event->name );
-        }
-        else {
-          printf( "The file %s was created.\n", event->name );
-        }*/
-        string evenNameString = event->name;
-        if (evenNameString == "updateConfig") {
-          checkUpdateFile();
-        }
-      } else if (event->mask & IN_DELETE) {
-        string message = "What are you doing? this file / dir was deleted:";
-        message.append(event->name);
-        log(message);
-      } else if (event->mask & IN_MODIFY) {
-        /*if ( event->mask & IN_ISDIR ) {
-          printf( "The directory %s was modified.\n", event->name );
-        }
-        else {
-          printf( "The file %s was modified.\n", event->name );
-        }*/
-        string evenNameString = event->name;
-        if (evenNameString == "updateConfig") {
-          checkUpdateFile();
-        }
-      }
+    if (length < 0) {
+      log("failed to read from buffer");
     }
-    i += EVENT_SIZE + event->len;
-  }
 
+    /*
+    while ( i < length ) {
+        struct inotify_event *event = ( struct inotify_event * ) &buffer[ i ];
+        if(event->len) {
+            if ( event->mask & IN_MODIFY ) {
+                log("/tmp/power was modified");
+            }
+        }
+    }
+    */
+    // this loop goes through all changes
+    while (i < length) {
+      log("Inotify loop executed");
+      struct inotify_event *event = (struct inotify_event *)&buffer[i];
+      if (event->len) {
+        if (event->mask & IN_CREATE) {
+          string evenNameString = event->name;
+          log("Inotify: detected a create event of name: " + evenNameString);
+
+          if (evenNameString == "updateConfig") {
+            checkUpdateFile();
+          }
+        } else if (event->mask & IN_DELETE) {
+          string message = "What are you doing? this file / dir was deleted:";
+          message.append(event->name);
+          log(message);
+        } else if (event->mask & IN_MODIFY) {
+          string evenNameString = event->name;
+          log("Inotify: detected a modification event of name: " +
+              evenNameString);
+          if (evenNameString == "updateConfig") {
+            checkUpdateFile();
+          }
+        }
+      }
+      i += EVENT_SIZE + event->len;
+    }
+    log("All events readed");
+  }
+  log("inotify crashed");
   (void)inotify_rm_watch(fd, wd);
   (void)close(fd);
 }
@@ -94,6 +94,6 @@ void checkUpdateFile() {
     prepareVariables();
     writeFileString("/data/config/20-sleep_daemon/updateConfig", "false");
   } else {
-    log("Something is wrong with /data/config/20-sleep_daemon/updateConfig...");
+    log("updateConfig is false, not updating anything");
   }
 }

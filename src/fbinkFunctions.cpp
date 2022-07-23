@@ -85,10 +85,10 @@ void clearScreen(bool darkmodeset) {
   fbink_cls(fbfd, &fbink_cfg, &cls_rect, false);
 }
 
-void printImage(string path) {
+int printImage(string path) {
   FBInkConfig fbink_cfg = {0};
 
-  fbink_print_image(fbfd, path.c_str(), 0, 0, &fbink_cfg);
+  return fbink_print_image(fbfd, path.c_str(), 0, 0, &fbink_cfg);
 }
 
 void screenshotFbink() {

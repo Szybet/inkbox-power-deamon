@@ -7,6 +7,7 @@
 #include "goingSleep.h"
 #include "monitorEvents.h"
 #include "prepareSleep.h"
+#include "devices.h"
 
 using namespace std;
 
@@ -69,7 +70,7 @@ void startWatchdog() {
       }
 
       // Proritise user events over next steps - actually no. maybe
-      //watchdogNextStep = Nothing;
+      // watchdogNextStep = Nothing;
 
       waitMutex(&sleep_mtx);
 
@@ -162,39 +163,48 @@ void startWatchdog() {
         //
       } else if (sleepJob == GoingSleep) {
         log("Launching after thread becouse of goingsleep sleep job");
-        waitMutex(&CurrentActiveThread_mtx);
-        sleepJob = After;
-        sleep_mtx.unlock();
+        // To be sure a new thread isin't launching anyway
+        std::this_thread::sleep_for(std::chrono::milliseconds(400));
 
-        if (CurrentActiveThread != Nothing) {
-          bool check = false;
-          CurrentActiveThread_mtx.unlock();
-          while (check == false) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(50));
-            waitMutex(&CurrentActiveThread_mtx);
-            if (CurrentActiveThread == Nothing) {
-              check = true;
+        if (watchdogNextStep != After) {
+          waitMutex(&CurrentActiveThread_mtx);
+          sleepJob = After;
+          sleep_mtx.unlock();
+
+          if (CurrentActiveThread != Nothing) {
+            bool check = false;
+            CurrentActiveThread_mtx.unlock();
+            while (check == false) {
+              std::this_thread::sleep_for(std::chrono::milliseconds(50));
+              waitMutex(&CurrentActiveThread_mtx);
+              if (CurrentActiveThread == Nothing) {
+                check = true;
+              }
+              CurrentActiveThread_mtx.unlock();
             }
+          } else {
             CurrentActiveThread_mtx.unlock();
           }
-        } else {
+
+          waitMutex(&CurrentActiveThread_mtx);
+          CurrentActiveThread = After;
           CurrentActiveThread_mtx.unlock();
+
+          afterThread = thread(afterSleep);
+          afterThread.detach();
+
+          //
+        } else {
+          log("A event from monitorevents requested after thread, but watchdogNextStep already wanted it, so skipping the monitorevent request");
+          sleep_mtx.unlock();
         }
-
-        waitMutex(&CurrentActiveThread_mtx);
-        CurrentActiveThread = After;
-        CurrentActiveThread_mtx.unlock();
-
-        afterThread = thread(afterSleep);
-        afterThread.detach();
-
-        //
       } else {
         log("This will never happen: watchdog");
         sleep_mtx.unlock();
       }
     }
     if (watchdogNextStep != Nothing) {
+      log("launching watchdogNextStep request");
       // Make sure all jobs exit. they propably already are, becouse they called
       // it
       waitMutex(&sleep_mtx);
@@ -218,6 +228,7 @@ void startWatchdog() {
       }
 
       if (watchdogNextStep == After) {
+        log("Launching after thread becouse of a request of watchdogNextStep");
         waitMutex(&sleep_mtx);
         sleepJob = After;
         sleep_mtx.unlock();
@@ -229,6 +240,8 @@ void startWatchdog() {
         afterThread = thread(afterSleep);
         afterThread.detach();
       } else if (watchdogNextStep == GoingSleep) {
+        log("Launching goingsleep thread becouse of a request of "
+            "watchdogNextStep");
         waitMutex(&sleep_mtx);
         sleepJob = GoingSleep;
         sleep_mtx.unlock();
@@ -245,6 +258,7 @@ void startWatchdog() {
       }
       watchdogNextStep = Nothing;
     }
+    ledManager();
     std::this_thread::sleep_for(timespan);
   }
 
@@ -252,32 +266,3 @@ void startWatchdog() {
   afterThread.join();
   goingThread.join();
 }
-
-/*
-// some bad code:
-// to be sure, always to avoid crashes
-    if (prepareThread.joinable() == true) {
-      log("Fallback joining in watchdog: prepare thread");
-      //prepareThread.join();
-      //log("fallback joined: prepare thread");
-      //waitMutex(&CurrentActiveThread_mtx);
-      //CurrentActiveThread = Nothing;
-      //CurrentActiveThread_mtx.unlock();
-    }
-    if (goingThread.joinable() == true) {
-      log("Fallback joining in watchdog: going thread");
-      //goingThread.join();
-      //log("fallback joined: going thread");
-      //waitMutex(&CurrentActiveThread_mtx);
-      //CurrentActiveThread = Nothing;
-      //CurrentActiveThread_mtx.unlock();
-    }
-    if (afterThread.joinable() == true) {
-      log("Fallback joining in watchdog: after thread");
-      //afterThread.join();
-      //log("fallback joined: after thread");
-      //waitMutex(&CurrentActiveThread_mtx);
-      //CurrentActiveThread = Nothing;
-      CurrentActiveThread_mtx.unlock();
-    }
-*/

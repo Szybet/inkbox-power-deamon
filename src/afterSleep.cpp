@@ -2,6 +2,7 @@
 #include "AppsFreeze.h"
 #include "Wifi.h"
 #include "cinematicBrightness.h"
+#include "devices.h"
 #include "fbinkFunctions.h"
 #include "functions.h"
 #include "pipeHandler.h"
@@ -19,6 +20,12 @@
 #include <thread>
 #include <unistd.h>
 
+// var
+
+extern bool recconectWifi;
+
+//
+
 extern sleepBool sleepJob;
 extern mutex sleep_mtx;
 
@@ -28,6 +35,8 @@ extern bool darkmode;
 
 extern sleepBool CurrentActiveThread;
 extern mutex CurrentActiveThread_mtx;
+
+extern mutex OccupyLed;
 
 // there is no way to stop the threat... so i will use this bool
 bool dieAfter;
@@ -42,6 +51,7 @@ bool dieAfter;
 // void checkExitAfter()
 void CEA() {
   if (dieAfter == false) {
+    manageChangeLedState();
     waitMutex(&sleep_mtx);
     if (sleepJob != After) {
       sleep_mtx.unlock();
@@ -55,6 +65,7 @@ void CEA() {
 void afterSleep() {
   log("Launching afterSleep");
   dieAfter = false;
+  waitMutex(&OccupyLed);
 
   // very important.
   int fd = open("/sys/power/state-extended", O_RDWR);
@@ -80,9 +91,8 @@ void afterSleep() {
   CEA();
   if (dieAfter == false) {
     unfreezeApps();
-    std::this_thread::sleep_for(std::chrono::milliseconds(300));
+    std::this_thread::sleep_for(std::chrono::milliseconds(650));
     restorePipeSend();
-    std::this_thread::sleep_for(std::chrono::milliseconds(300));
   }
 
   CEA();
@@ -96,9 +106,14 @@ void afterSleep() {
     remove("/tmp/savedBrightness");
   }
 
-  CEA();
-  if (dieAfter == false) {
-    turnOnWifi();
+  if (recconectWifi == true) {
+    log("Recconecting to wifi becouse of 5-WifiRecconect");
+    CEA();
+    if (dieAfter == false) {
+      turnOnWifi();
+    }
+  } else {
+    log("Not Recconecting to wifi becouse of 5-WifiRecconect");
   }
 
   CEA();
@@ -112,6 +127,8 @@ void afterSleep() {
     sleepJob = Nothing;
     sleep_mtx.unlock();
   }
+
+  OccupyLed.unlock();
   waitMutex(&CurrentActiveThread_mtx);
   CurrentActiveThread = Nothing;
   CurrentActiveThread_mtx.unlock();

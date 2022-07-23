@@ -2,14 +2,19 @@
 #include "AppsFreeze.h"
 #include "Wifi.h"
 #include "cinematicBrightness.h"
+#include "devices.h"
 #include "fbink.h"
 #include "fbinkFunctions.h"
 #include "functions.h"
 #include "pipeHandler.h"
 #include "usbnet.h"
 
+#include <cstdlib>
 #include <exception>
+#include <experimental/filesystem>
+#include <iostream>
 #include <mutex>
+#include <stdlib.h>
 #include <string>
 #include <thread>
 
@@ -25,6 +30,8 @@ extern bool darkmode;
 extern sleepBool CurrentActiveThread;
 extern mutex CurrentActiveThread_mtx;
 
+extern mutex OccupyLed;
+
 // there is no way to stop the threat... so i will use this bool
 bool diePrepare;
 
@@ -38,6 +45,7 @@ bool diePrepare;
 // checkExitPrepare
 void CEP() {
   if (diePrepare == false) {
+    manageChangeLedState();
     waitMutex(&sleep_mtx);
     if (sleepJob != Prepare) {
       sleep_mtx.unlock();
@@ -49,6 +57,7 @@ void CEP() {
 }
 
 void prepareSleep() {
+  waitMutex(&OccupyLed);
   log("Launching prepareSleep");
   diePrepare = false;
 
@@ -107,6 +116,10 @@ void prepareSleep() {
   if (diePrepare == false) {
     watchdogNextStep = GoingSleep;
   }
+
+  // and yes, this will be always executed
+  OccupyLed.unlock();
+
   waitMutex(&CurrentActiveThread_mtx);
   CurrentActiveThread = Nothing;
   CurrentActiveThread_mtx.unlock();
@@ -117,6 +130,31 @@ void prepareSleep() {
 // writing Sleeping anyway with background
 void sleepScreen() {
   // printImage("/image.jpg");
+  string screenSaverPath = "/data/onboard/.screensaver";
+  if (dirExists(screenSaverPath) == true) {
+    vector<string> imageList;
+    for (const auto &entry :
+         experimental::filesystem::directory_iterator(screenSaverPath)) {
+      if (string(entry.path()).find(".png") != std::string::npos) {
+        imageList.push_back(string(entry.path()));
+        log("Found screensaver image: " + string(entry.path()));
+      }
+    }
+    if (imageList.empty() == false) {
+      string choosedScreensaver = imageList.at(rand() % imageList.size());
+      if (fileExists(choosedScreensaver) == true) {
+        log("Writing image to fbink: " + choosedScreensaver);
+        int status = printImage(choosedScreensaver);
+        if(status < 0)
+        {
+          log("Failed to decode the screensaver image, propably");
+          fbinkWriteCenter("Sleeping", darkmode);
+        }
+        return;
+      }
+    }
+  }
+  log("Something went wrong with screensaver, writing normal message");
   fbinkWriteCenter("Sleeping", darkmode);
 }
 

@@ -11,6 +11,7 @@
 #include "monitorEvents.h"
 #include "pipeHandler.h"
 #include "watchdog.h"
+#include "idleSleep.h"
 
 extern bool logEnabled;
 extern int fbfd;
@@ -42,11 +43,14 @@ int main() {
   thread monitorDev(startMonitoringDev);
   thread watchdogThread(startWatchdog);
   thread watchConfig(startMonitoringConfig);
+  thread idleSleep(startIdleSleep);
 
   // https://stackoverflow.com/questions/7381757/c-terminate-called-without-an-active-exception
   monitorDev.join();
   watchdogThread.join();
   watchConfig.join();
+  idleSleep.join();
+  
   log("How did this ended");
   return -1;
 }

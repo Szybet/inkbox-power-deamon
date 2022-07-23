@@ -15,7 +15,9 @@
 #include <thread>
 #include <unistd.h>
 #include <vector>
+#include <regex>
 
+#include "devices.h"
 #include "fbink.h"
 #include "functions.h"
 
@@ -48,6 +50,12 @@ string cpuGovernorToSet;
 
 bool WhenChargerSleep;
 
+bool ChargerWakeUp;
+
+bool recconectWifi;
+
+bool LedUsage;
+
 // Internal variables used by watchdog and threads
 
 // im not sure if this one doesnt need a mutex. will leave it for now
@@ -67,6 +75,13 @@ mutex sleep_mtx;
 sleepBool CurrentActiveThread;
 mutex CurrentActiveThread_mtx;
 
+// To avoid confusion with the led control ( if this is locked, then it other
+// things are done beside charging indicator, like flickering)
+mutex OccupyLed;
+
+// Avoid writing to the led if not needed
+bool ledstate = false;
+
 //
 
 void log(string to_log) {
@@ -81,6 +96,8 @@ void log(string to_log) {
 }
 
 void waitMutex(mutex *exampleMutex) {
+  // Ok, now here look how stupid i was when i started writing this
+  /*
   bool continueBool = false;
   std::chrono::milliseconds timespan(150);
 
@@ -92,6 +109,12 @@ void waitMutex(mutex *exampleMutex) {
       continueBool = true;
     }
   }
+  */
+  // All this can be, and should be made like this:
+  exampleMutex->lock();
+  // now this function doesnt have any sense, maybe looks better
+  // could be replaced in the future, but maybe adding some logging which thread
+  // occupies which mutex would be cool leave for now
 }
 
 void prepareVariables() {
@@ -137,13 +160,13 @@ void prepareVariables() {
   // /data/config/20-sleep_daemon
   string mainPath = "/data/config/20-sleep_daemon";
   if (dirExists(mainPath) == false) {
+    log("Creating basic config");
     experimental::filesystem::create_directory(mainPath);
     // /data/config/20-sleep_daemon/appList.txt
     writeFileString("/data/config/20-sleep_daemon/appList.txt",
                     "inkbox-bin\noobe-inkbox-bin\nlockscreen-bin\ncalculator-"
                     "bin\nqreversi-bin\n2048-bin\nscribble\nlightmaps\nexec");
-    log("Created /data/config/20-sleep_daemon/appList.txt directory and "
-        "appList.txt in it");
+    writeFileString("/data/config/20-sleep_daemon/updateConfig", "false");
   }
 
   // 1-CinematicBrightnessdelayMs
@@ -184,10 +207,59 @@ void prepareVariables() {
       WhenChargerSleep = false;
     }
   } else {
-    // Here it should depend on device
-    writeFileString(WhenChargerSleepPath, "true");
-    WhenChargerSleep = true;
+    // those devices have problems when going to sleep with a charger
+    if (isDeviceChargerBug() == true) {
+      writeFileString(WhenChargerSleepPath, "false");
+      WhenChargerSleep = false;
+    } else {
+      writeFileString(WhenChargerSleepPath, "true");
+      WhenChargerSleep = true;
+    }
   }
+
+  // 4-ChargerWakeUp
+  string ChargerWakeUpPath = "/data/config/20-sleep_daemon/4-ChargerWakeUp";
+  if (fileExists(ChargerWakeUpPath) == true) {
+    // welp a function for this would be cool
+    string boolToConvert = readConfigString(ChargerWakeUpPath);
+    if (boolToConvert == "true") {
+      ChargerWakeUp = true;
+    } else {
+      ChargerWakeUp = false;
+    }
+  } else {
+    writeFileString(ChargerWakeUpPath, "false");
+    ChargerWakeUp = false;
+  }
+
+  // 5-WifiRecconect
+  string recconectWifiPath = "/data/config/20-sleep_daemon/5-WifiRecconect";
+  if (fileExists(recconectWifiPath) == true) {
+    string boolToConvert = readConfigString(recconectWifiPath);
+    if (boolToConvert == "true") {
+      recconectWifi = true;
+    } else {
+      recconectWifi = false;
+    }
+  } else {
+    writeFileString(recconectWifiPath, "true");
+    recconectWifi = true;
+  }
+
+  // 6-LedUsage
+  string LedUsagePath = "/data/config/20-sleep_daemon/6-LedUsage";
+  if (fileExists(LedUsagePath) == true) {
+    string boolToConvert = readConfigString(LedUsagePath);
+    if (boolToConvert == "true") {
+      LedUsage = true;
+    } else {
+      LedUsage = false;
+    }
+  } else {
+    writeFileString(LedUsagePath, "false");
+    recconectWifi = false;
+  }
+  setLedState(false);
 }
 
 string readConfigString(string path) {
@@ -203,6 +275,7 @@ string readConfigString(string path) {
     indata >> returnData;
   }
   indata.close();
+  log(path + " is: " + returnData);
   return returnData;
 }
 
@@ -273,19 +346,24 @@ string executeCommand(string command) {
   return result;
 }
 
-bool getChargerStatus() {
-  string chargerStatus;
-  if(model == "kt")
-  {
-    chargerStatus = readConfigString("/sys/devices/system/yoshi_battery/yoshi_battery0/battery_status");
-  } else {
-    chargerStatus = readConfigString("/sys/devices/platform/pmic_battery.1/power_supply/mc13892_bat/status");
-    
+// why this isin't a standard
+string normalReplace(string MainString, string strToLookFor, string replacement)
+{
+  return std::regex_replace(MainString, std::regex(strToLookFor), replacement);
+}
+
+string readConfigStringNoLog(string path) {
+  ifstream indata;
+  string returnData;
+  indata.open(path);
+  if (!indata) {
+    log("couldn't read config file: " + path);
+    return "none";
   }
-  if(chargerStatus == "Discharging")
-  {
-    return false;
-  } else {
-    return true;
+  indata >> returnData;
+  while (!indata.eof()) {
+    indata >> returnData;
   }
+  indata.close();
+  return returnData;
 }

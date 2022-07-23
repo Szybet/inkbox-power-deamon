@@ -25,7 +25,9 @@ bool dirExists(string path);
 
 string executeCommand(string command);
 
-bool getChargerStatus();
+string normalReplace(string MainString, string strToLookFor, string replacement);
+
+string readConfigStringNoLog(string path);
 
 enum goSleepCondition
 {

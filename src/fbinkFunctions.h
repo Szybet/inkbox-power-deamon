@@ -12,7 +12,7 @@ int fbinkWriteCenter(string stringToWrite, bool darkmode);
 
 void clearScreen(bool darkmodeset);
 
-void printImage(string path);
+int printImage(string path);
 
 void screenshotFbink();
 

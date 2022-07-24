@@ -44,7 +44,7 @@ void join_smarter(thread threadArg)
 // but it doesnt work, some weird error so...
 
 void startWatchdog() {
-  std::chrono::milliseconds timespan(150);
+  std::chrono::milliseconds timespan(200);
 
   thread prepareThread;
   thread afterThread;

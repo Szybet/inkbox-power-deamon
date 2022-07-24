@@ -101,8 +101,10 @@ void startMonitoringConfig() {
         }
       }
       i += EVENT_SIZE + event->len;
+      
     }
     log("All events readed");
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
   }
   log("inotify crashed");
   (void)inotify_rm_watch(fd, wd);

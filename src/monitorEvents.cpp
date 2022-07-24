@@ -49,7 +49,7 @@ void startMonitoringDev() {
       " vendor: " + to_string(libevdev_get_id_vendor(dev)) +
       " product: " + to_string(libevdev_get_id_product(dev)));
 
-  chrono::milliseconds timespan(150);
+  chrono::milliseconds timespan(200);
   chrono::milliseconds afterEventWait(1000);
   do {
 

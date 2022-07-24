@@ -19,6 +19,7 @@ extern int fbfd;
 using namespace std;
 
 int main() {
+  // Some weird bugs, this is the fix, but i lost the link to the fix
   static_cast<void>(pthread_create);
   static_cast<void>(pthread_cancel);
 

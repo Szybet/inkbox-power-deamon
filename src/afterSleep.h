@@ -5,4 +5,6 @@ void afterSleep();
 
 void CEA();
 
+void returnDeepSleep();
+
 #endif

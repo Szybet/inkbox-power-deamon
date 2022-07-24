@@ -20,7 +20,8 @@ void manageChangeLedState() {
 
 void changeLedState() {
   if (model == "n306") {
-    // here its checking the real one, if some other app wants to control the led, fine
+    // here its checking the real one, if some other app wants to control the
+    // led, fine
     string path = "/sys/devices/platform/leds/leds/GLED/brightness";
     string state = readConfigStringNoLog(path);
     int dev = open(path.c_str(), O_RDWR);
@@ -120,12 +121,23 @@ bool getAccurateChargerStatus() {
         "/sys/devices/platform/pmic_battery.1/power_supply/mc13892_bat/status");
   }
   chargerStatus = normalReplace(chargerStatus, "\n", "");
-  //log("charger status is: " + chargerStatus);
+  // log("charger status is: " + chargerStatus);
   if (chargerStatus == "Discharging" or chargerStatus == "Not charging") {
-    //log("So the device is not charging, or is charged in 100%");
+    // log("So the device is not charging, or is charged in 100%");
     return false;
   } else {
-    //log("So the device is charging");
+    // log("So the device is charging");
     return true;
   }
+}
+
+void setCpuGovernor(string cpuGovernor) {
+  log("Setting cpu freq governor to " + cpuGovernor);
+  int dev =
+      open("/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor", O_RDWR);
+  int writeStatus =
+      write(dev, cpuGovernor.c_str(), cpuGovernor.length());
+  close(dev);
+  log("Write status writing to scaling_governor is: " +
+      std::to_string(writeStatus));
 }

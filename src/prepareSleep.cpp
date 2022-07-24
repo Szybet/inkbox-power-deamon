@@ -32,6 +32,8 @@ extern mutex CurrentActiveThread_mtx;
 
 extern mutex OccupyLed;
 
+extern bool deepSleep;
+
 // there is no way to stop the threat... so i will use this bool
 bool diePrepare;
 
@@ -117,6 +119,13 @@ void prepareSleep() {
     watchdogNextStep = GoingSleep;
   }
 
+  CEP();
+  if (diePrepare == false) {
+    if (deepSleep == true) {
+      deepSleepGo();
+    }
+  }
+
   // and yes, this will be always executed
   OccupyLed.unlock();
 
@@ -145,8 +154,7 @@ void sleepScreen() {
       if (fileExists(choosedScreensaver) == true) {
         log("Writing image to fbink: " + choosedScreensaver);
         int status = printImage(choosedScreensaver);
-        if(status < 0)
-        {
+        if (status < 0) {
           log("Failed to decode the screensaver image, propably");
           fbinkWriteCenter("Sleeping", darkmode);
         }
@@ -158,5 +166,10 @@ void sleepScreen() {
   fbinkWriteCenter("Sleeping", darkmode);
 }
 
-// first send a message to a fifo pipe for qt sleeping next read app list from
-// /data/config/20-sleep_daemon and freeze them. user apps: ???
+void deepSleepGo() {
+  log("Going to deep sleep");
+  // cpu governor power save
+  setCpuGovernor("powersave");
+
+  // for now only this
+}

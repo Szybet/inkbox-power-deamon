@@ -1,6 +1,9 @@
 #ifndef DEVICES_H
 #define DEVICES_H
 
+#include <string>
+using namespace std;
+
 void manageChangeLedState();
 
 void changeLedState();
@@ -14,5 +17,7 @@ bool getChargerStatus();
 bool isDeviceChargerBug();
 
 bool getAccurateChargerStatus();
+
+void setCpuGovernor(string cpuGovernor);
 
 #endif

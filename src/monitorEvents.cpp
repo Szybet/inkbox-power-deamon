@@ -28,6 +28,9 @@ extern mutex watchdogStartJob_mtx;
 extern goSleepCondition newSleepCondition;
 extern mutex newSleepCondition_mtx;
 
+extern bool customCase;
+extern int customCaseCount;
+
 void startMonitoringDev() {
   log("Starting monitoring events");
 
@@ -75,17 +78,40 @@ void startMonitoringDev() {
 
       // For hall sensor, kobo nia
       if (codeName == "KEY_F1" and ev.value == 1) {
-        log("MonitorEvents: Received hall trigger, Sending message to sleep");
+        if (customCase == true) {
+          log("8-CustomCase is true");
+          customCaseCount = customCaseCount + 1;
+          log("customCaseCount is: " + to_string(customCaseCount));
+          if (customCaseCount == 1) {
+            log("Ignoring hall trigger becouse of 8-CustomCase");
+          } else if (customCaseCount >= 2) {
+            customCaseCount = 0;
+            log("Second hall trigger, going to sleep");
+            waitMutex(&watchdogStartJob_mtx);
+            watchdogStartJob = true;
+            watchdogStartJob_mtx.unlock();
 
-        waitMutex(&watchdogStartJob_mtx);
-        watchdogStartJob = true;
-        watchdogStartJob_mtx.unlock();
+            waitMutex(&newSleepCondition_mtx);
+            newSleepCondition = halSensor;
+            newSleepCondition_mtx.unlock();
 
-        waitMutex(&newSleepCondition_mtx);
-        newSleepCondition = powerButton;
-        newSleepCondition_mtx.unlock();
+            this_thread::sleep_for(afterEventWait);
+          }
 
-        this_thread::sleep_for(afterEventWait);
+        } else {
+          log("8-CustomCase is false so:");
+          log("MonitorEvents: Received hall trigger, Sending message to sleep");
+
+          waitMutex(&watchdogStartJob_mtx);
+          watchdogStartJob = true;
+          watchdogStartJob_mtx.unlock();
+
+          waitMutex(&newSleepCondition_mtx);
+          newSleepCondition = halSensor;
+          newSleepCondition_mtx.unlock();
+
+          this_thread::sleep_for(afterEventWait);
+        }
       }
     }
 

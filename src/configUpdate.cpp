@@ -18,6 +18,21 @@
 #define EVENT_SIZE (sizeof(struct inotify_event))
 #define BUF_LEN (1024 * (EVENT_SIZE + 16))
 
+extern bool watchdogStartJob;
+extern mutex watchdogStartJob_mtx;
+
+extern goSleepCondition newSleepCondition;
+extern mutex newSleepCondition_mtx;
+
+extern sleepBool sleepJob;
+extern mutex sleep_mtx;
+
+extern sleepBool CurrentActiveThread;
+extern mutex CurrentActiveThread_mtx;
+
+extern bool deepSleep;
+extern bool deepSleepPermission;
+
 // this isin't the best implementation, and i dont understand some things
 
 void startMonitoringConfig() {
@@ -66,6 +81,9 @@ void startMonitoringConfig() {
           if (evenNameString == "updateConfig") {
             checkUpdateFile();
           }
+          if (evenNameString == "SleepCall") {
+            sleepInotifyCall();
+          }
         } else if (event->mask & IN_DELETE) {
           string message = "What are you doing? this file / dir was deleted:";
           message.append(event->name);
@@ -76,6 +94,9 @@ void startMonitoringConfig() {
               evenNameString);
           if (evenNameString == "updateConfig") {
             checkUpdateFile();
+          }
+          if (evenNameString == "SleepCall") {
+            sleepInotifyCall();
           }
         }
       }
@@ -95,5 +116,33 @@ void checkUpdateFile() {
     writeFileString("/data/config/20-sleep_daemon/updateConfig", "false");
   } else {
     log("updateConfig is false, not updating anything");
+  }
+}
+
+void sleepInotifyCall() {
+  log("sleepInotifyCall() called, going to sleep, propably");
+  if (deepSleepPermission == true) {
+    string deepSleepFile =
+        readConfigString("/data/config/20-sleep_daemon/SleepCall");
+    bool go = false;
+    if (deepSleepFile == "deepsleep") {
+      deepSleep = true;
+      go = true;
+    } else if (deepSleepFile == "sleep") {
+      go = true;
+    }
+    if (go == true) {
+      deepSleepPermission = false;
+      log("Going to sleep becouse of inotify call");
+      CurrentActiveThread_mtx.unlock();
+
+      waitMutex(&watchdogStartJob_mtx);
+      watchdogStartJob = true;
+      watchdogStartJob_mtx.unlock();
+
+      waitMutex(&newSleepCondition_mtx);
+      newSleepCondition = Inotify;
+      newSleepCondition_mtx.unlock();
+    }
   }
 }

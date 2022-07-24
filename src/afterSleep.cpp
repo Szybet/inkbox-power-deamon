@@ -24,9 +24,13 @@
 
 extern bool recconectWifi;
 
+extern bool deepSleep;
+extern bool deepSleepPermission;
+
+extern string cpuGovernorToSet;
+
 // idle count, to reset it
 extern int countIdle;
-
 
 //
 
@@ -70,6 +74,9 @@ void afterSleep() {
   log("Launching afterSleep");
   dieAfter = false;
   waitMutex(&OccupyLed);
+
+  // Dont put CEA here to avoid locking deepSleepPermission forever
+  returnDeepSleep();
 
   // very important.
   int fd = open("/sys/power/state-extended", O_RDWR);
@@ -138,4 +145,14 @@ void afterSleep() {
   CurrentActiveThread_mtx.unlock();
   countIdle = 0;
   log("Exiting afterSleep");
+}
+
+void returnDeepSleep() {
+  log("Returning from deep sleep");
+  if (deepSleep == true) {
+    remove("/data/config/20-sleep_daemon/SleepCall");
+    setCpuGovernor(cpuGovernorToSet);
+  }
+  deepSleep = false;
+  deepSleepPermission = true;
 }

@@ -5,4 +5,7 @@ void startMonitoringConfig();
 
 void checkUpdateFile();
 
+void sleepInotifyCall();
+
+
 #endif

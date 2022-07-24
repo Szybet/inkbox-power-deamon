@@ -59,6 +59,11 @@ bool LedUsage;
 int idleSleepTime;
 
 bool customCase;
+// When 2 it resets to 0 and triggers the watchdog. so 1 is ignored
+int customCaseCount = 0;
+
+bool deepSleep;
+bool deepSleepPermission = true; // Becouse inotify is weird, if false it will ignore the call. its called true in after sleep
 
 // Internal variables used by watchdog and threads
 
@@ -190,14 +195,7 @@ void prepareVariables() {
   string cpuGovernorPath = "/data/config/20-sleep_daemon/2-cpuGovernor";
   if (fileExists(cpuGovernorPath) == true) {
     cpuGovernorToSet = readConfigString(cpuGovernorPath);
-    log("Setting cpu freq governor to " + cpuGovernorToSet);
-    int dev =
-        open("/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor", O_RDWR);
-    int writeStatus =
-        write(dev, cpuGovernorToSet.c_str(), cpuGovernorToSet.length());
-    close(dev);
-    log("Write status writing to scaling_governor is: " +
-        std::to_string(writeStatus));
+    setCpuGovernor(cpuGovernorToSet);
   } else {
     writeFileString(cpuGovernorPath, "ondemand");
     cpuGovernorToSet = "ondemand";
@@ -291,6 +289,12 @@ void prepareVariables() {
   } else {
     writeFileString(customCasePath, "false");
     customCase = false;
+  }
+
+  // 9-DeepSleep
+  string DeepSleepPath = "/data/config/20-sleep_daemon/9-DeepSleep";
+  if (fileExists(DeepSleepPath) == false) {
+    writeFileString(DeepSleepPath, "false");
   }
 }
 

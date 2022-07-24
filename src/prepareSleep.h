@@ -6,11 +6,8 @@ void prepareSleep();
 
 void CEP();
 
-void Screenshot();
-
 void sleepScreen();
 
-void freezeApps();
-
+void deepSleepGo();
 
 #endif

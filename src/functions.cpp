@@ -56,6 +56,10 @@ bool recconectWifi;
 
 bool LedUsage;
 
+int idleSleepTime;
+
+bool customCase;
+
 // Internal variables used by watchdog and threads
 
 // im not sure if this one doesnt need a mutex. will leave it for now
@@ -81,6 +85,9 @@ mutex OccupyLed;
 
 // Avoid writing to the led if not needed
 bool ledstate = false;
+
+// Count for idle
+int countIdle = 0;
 
 //
 
@@ -260,6 +267,31 @@ void prepareVariables() {
     recconectWifi = false;
   }
   setLedState(false);
+
+  // 7-IdleSleep
+  string idleSleepTimePath = "/data/config/20-sleep_daemon/7-IdleSleep";
+  if (fileExists(idleSleepTimePath) == true) {
+    string intToConvert = readConfigString(idleSleepTimePath);
+    intToConvert = normalReplace(intToConvert, "\n", ""); // i like to be sure about some things.
+    idleSleepTime = stoi(intToConvert);
+  } else {
+    writeFileString(idleSleepTimePath, "60");
+    idleSleepTime = 60;
+  }
+
+  // 8-CustomCase
+  string customCasePath = "/data/config/20-sleep_daemon/8-CustomCase";
+  if (fileExists(customCasePath) == true) {
+    string boolToConvert = readConfigString(customCasePath);
+    if (boolToConvert == "true") {
+      customCase = true;
+    } else {
+      customCase = false;
+    }
+  } else {
+    writeFileString(customCasePath, "false");
+    customCase = false;
+  }
 }
 
 string readConfigString(string path) {

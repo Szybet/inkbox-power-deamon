@@ -54,12 +54,13 @@ void startMonitoringDev() {
     rc = libevdev_next_event(dev, LIBEVDEV_READ_FLAG_NORMAL, &ev);
     if (rc == 0) {
       string codeName = (string)libevdev_event_code_get_name(ev.type, ev.code);
-      log("Input event received: " +
-          (string)libevdev_event_type_get_name(ev.type) + codeName + " " +
-          to_string(ev.value));
+      log("Input event received, type: " +
+          (string)libevdev_event_type_get_name(ev.type) +
+          " codename: " + codeName + " value: " + to_string(ev.value));
 
       if (codeName == "KEY_POWER" and ev.value == 1) {
-        log("MonitorEvents: Sending message to sleep");
+        log("MonitorEvents: Received power button trigger, Sending message to "
+            "sleep");
 
         waitMutex(&watchdogStartJob_mtx);
         watchdogStartJob = true;
@@ -69,7 +70,22 @@ void startMonitoringDev() {
         newSleepCondition = powerButton;
         newSleepCondition_mtx.unlock();
 
-        // this_thread::sleep_for(afterEventWait);
+        this_thread::sleep_for(afterEventWait);
+      }
+
+      // For hall sensor, kobo nia
+      if (codeName == "KEY_F1" and ev.value == 1) {
+        log("MonitorEvents: Received hall trigger, Sending message to sleep");
+
+        waitMutex(&watchdogStartJob_mtx);
+        watchdogStartJob = true;
+        watchdogStartJob_mtx.unlock();
+
+        waitMutex(&newSleepCondition_mtx);
+        newSleepCondition = powerButton;
+        newSleepCondition_mtx.unlock();
+
+        this_thread::sleep_for(afterEventWait);
       }
     }
 

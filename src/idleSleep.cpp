@@ -28,6 +28,18 @@ extern mutex watchdogStartJob_mtx;
 extern goSleepCondition newSleepCondition;
 extern mutex newSleepCondition_mtx;
 
+extern sleepBool sleepJob;
+extern mutex sleep_mtx;
+
+extern sleepBool CurrentActiveThread;
+extern mutex CurrentActiveThread_mtx;
+
+extern sleepBool watchdogNextStep;
+
+extern int idleSleepTime;
+
+extern int countIdle;
+
 void startIdleSleep() {
   log("Starting idle sleep");
 
@@ -46,23 +58,60 @@ void startIdleSleep() {
       " vendor: " + to_string(libevdev_get_id_vendor(dev)) +
       " product: " + to_string(libevdev_get_id_product(dev)));
 
-  chrono::milliseconds timespan(150);
-  chrono::milliseconds afterEventWait(1000);
+  chrono::milliseconds timespan(1000);
+  // Add to it every second, and make operations based on this timing
+  countIdle = 0;
+  struct input_event ev;
   do {
+    if (idleSleepTime != 0) {
+      if (idleSleepTime <= countIdle) {
+        log("Go to sleep becouse of idle time");
+        waitMutex(&sleep_mtx);
+        // Do absolutely everything to not break things, to not go to idle sleep
+        // when other things are going on
+        if (sleepJob == Nothing) {
+          sleep_mtx.unlock();
+          if (watchdogNextStep == Nothing) {
+            waitMutex(&CurrentActiveThread_mtx);
+            if (CurrentActiveThread == Nothing) {
+              log("Going to sleep becouse of idle");
+              CurrentActiveThread_mtx.unlock();
+              countIdle = 0;
+              waitMutex(&watchdogStartJob_mtx);
+              watchdogStartJob = true;
+              watchdogStartJob_mtx.unlock();
 
-    struct input_event ev;
-    rc = libevdev_next_event(dev, LIBEVDEV_READ_FLAG_NORMAL, &ev);
-    while (rc == 0) {
-      string codeName = (string)libevdev_event_code_get_name(ev.type, ev.code);
-      log("Input event received: " +
-          (string)libevdev_event_type_get_name(ev.type) + codeName + " " +
-          to_string(ev.value));
+              waitMutex(&newSleepCondition_mtx);
+              newSleepCondition =
+                  Idle; // actually this isin't used anywhere, for now
+              newSleepCondition_mtx.unlock();
+            } else {
+              CurrentActiveThread_mtx.unlock();
+              log("Not going to sleep in idleSleep becouse of "
+                  "CurrentActiveThread");
+            }
+          } else {
+            log("Not going to sleep in idleSleep becouse of watchdogNextStep");
+          }
+        } else {
+          sleep_mtx.unlock();
+          log("Not going to sleep in idleSleep becouse of sleepJob");
+        }
+      }
+    }
 
-      
+    if (libevdev_has_event_pending(dev) == 1) {
+      countIdle = 0;
+      while (libevdev_has_event_pending(dev) == 1) {
+        // there is no free function?
+        rc = libevdev_next_event(dev, LIBEVDEV_READ_FLAG_NORMAL, &ev);
+      }
+      log("Received touchscreen input event");
     }
 
     this_thread::sleep_for(timespan);
-    log("what");
+    countIdle = countIdle + 1;
+    // log("countIdle = " + to_string(countIdle));
   } while (rc == 1 || rc == 0 || rc == -EAGAIN);
   log("Monitor events died :(");
 }

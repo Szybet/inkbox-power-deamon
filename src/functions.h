@@ -33,7 +33,8 @@ enum goSleepCondition
 {
     None,
     powerButton,
-    halSensor   
+    halSensor,
+    Idle
 };
 
 enum sleepBool

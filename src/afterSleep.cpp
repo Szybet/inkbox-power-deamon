@@ -24,6 +24,10 @@
 
 extern bool recconectWifi;
 
+// idle count, to reset it
+extern int countIdle;
+
+
 //
 
 extern sleepBool sleepJob;
@@ -132,5 +136,6 @@ void afterSleep() {
   waitMutex(&CurrentActiveThread_mtx);
   CurrentActiveThread = Nothing;
   CurrentActiveThread_mtx.unlock();
+  countIdle = 0;
   log("Exiting afterSleep");
 }

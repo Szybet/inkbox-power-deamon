@@ -157,7 +157,7 @@ void goSleep() {
     } else {
       // Exiting this sleeping hell
       log("Sleeping finished. Tryied going to sleep " + to_string(count) +
-          "times");
+          " times");
       continueSleeping = false;
 
       // 4-ChargerWakeUp
